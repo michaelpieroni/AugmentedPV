@@ -41,6 +41,9 @@ if nargout
 else
     gui_mainfcn(gui_State, varargin{:});
 end
+
+% Initialize Experimental Condition
+
 % End initialization code - DO NOT EDIT
 
 
@@ -57,9 +60,10 @@ handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
-initialize_gui(handles);
+date=initialize_gui(hObject, eventdata, handles);
 % UIWAIT makes Main wait for user response (see UIRESUME)
 % uiwait(handles.Main);
+
 
 
 
@@ -76,17 +80,27 @@ varargout{1} = handles.output;
 %H e K vengono utilizzati come passo di campionamento per il passaggio tra
 % pixel e mm
 
-function initialize_gui(handles)
-    handles.date.num_elec = 0;
-    handles.date.dim_elec = 0;
-    handles.date.r_space = 0;
-    handles.date.r_time = 0;
-    handles.date.mod_phos = '';
-    handles.date.disposition ='';
-    handles.date.mod_prot = '';
-    handles.date.type_map = '';
-    guidata(handles.Main,handles);
-    
+function date=initialize_gui(hObject, eventdata, handles)
+%     handles.date.num_elec = 0;
+%     handles.date.dim_elec = 0;
+%     handles.date.r_space = 0;
+%     handles.date.r_time = 0;
+%     handles.date.mod_phos = '';
+%     handles.date.disposition ='';
+%     handles.date.mod_prot = '';
+%     handles.date.type_map = '';
+%     guidata(hObject,handles);
+    set(handles.text1A,'String',[num2str(0),' x ',num2str(0)]);
+    % TODO
+    % 1) Add a second text1b to distinguish between #of columns and # of
+    % rows
+    date.dim_elec = 0;
+    date.r_space = 0;
+    date.r_time = 0;
+    date.mod_phos = '';
+    date.disposition ='';
+    date.mod_prot = '';
+    date.type_map = '';
 % PERMETTE DI FAR SCORRERE IL VIDEO UN FRAME ALLA VOLTA
 % obj = mmreader ( 'c: \ vid \ Akiyo.mp4' ); 
 % nFrames = obj . NumberOfFrames , 
@@ -95,6 +109,10 @@ function initialize_gui(handles)
 %     figura ( 1 ), imshow ( IMG , []); 
 % end
 
+function update_gui(hObject, eventdata, handles,varargin)
+    dati=varargin{1};
+    set(handles.text1A,'String',dati.numel_r);
+    
 % --- Executes on button press in Play.
 function Play_Callback(hObject, eventdata, handles)
 
@@ -129,7 +147,8 @@ function Exit_Callback(hObject, eventdata, handles)
 
 % --------------------------------------------------------------------
 function Control_Panel_Callback(hObject, eventdata, handles)
-  ins_data()
+ dati=ins_data(handles);
+ a=1;
   
 
 % --- Executes on button press in Import.

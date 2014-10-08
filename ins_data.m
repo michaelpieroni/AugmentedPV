@@ -22,9 +22,11 @@ function varargout = ins_data(varargin)
 
 % Edit the above text to modify the response to help ins_data
 
-% Last Modified by GUIDE v2.5 02-Oct-2014 23:32:21
+% Last Modified by GUIDE v2.5 08-Oct-2014 18:06:12
 
 % Begin initialization code - DO NOT EDIT
+
+varargout{1}=1;
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
@@ -36,11 +38,15 @@ if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
 
+
 if nargout
     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
 else
     gui_mainfcn(gui_State, varargin{:});
 end
+%Initialize Edits and Popup menus
+
+
 % End initialization code - DO NOT EDIT
 
 
@@ -54,6 +60,10 @@ function ins_data_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for ins_data
 handles.output = hObject;
+% Assign initial value at EDITs and POPUP menus
+hM=varargin{1};
+a=num2str(get(hM.text1A,'String'));
+set(handles.edit_elec_r,'String',a(1));
 
 % Update handles structure
 guidata(hObject, handles);
@@ -91,38 +101,54 @@ function push_insert_Callback(hObject, eventdata, handles)
 %      if isempty(edit_dim) || isempty(edit_space) || isempty(edit_num) || isempty(edit_time)|| isempty(pop_mod_prot)|| isempty(pop_mod_phos)|| isempty(pop_dispo)|| isempty(type_map)
 %         errordlg('Please, Fill In On Fiel','Error')
 %      else
-     global num_elec_r num_elec_c dim_elec r_space r_time num_phos_r 
-     global num_phos_c h k mod_phos disposition mod_prot type_map
+%      global num_elec_r num_elec_c dim_elec r_space r_time num_phos_r 
+%      global num_phos_c h k mod_phos disposition mod_prot type_map
+%      
+      dati.numel_r=str2num(get(handles.edit_elec_r,'String'));
      
-     num_elec_r = str2num(get(handles.edit_elec_r,'String'));
-     num_elec_c = str2num(get(handles.edit_elec_c,'String'));
-     dim_elec = str2num(get(handles.edit_dim,'String'));
-     r_space = str2num(get(handles.edit_space,'String'));
-     r_time = str2num(get(handles.edit_time,'String'));
-     num_phos_r = str2num(get(handles.edit_phos_r,'String'));
-     num_phos_c = str2num(get(handles.edit_phos_c,'String'));
-     h = str2num(get(handles.edit_h,'String'));
-     k = str2num(get(handles.edit_k,'String'));
-          
-     %select modulation prothesis
-     list1 = get(handles.pop_mod_prot,'String');
-     m = get(handles.pop_mod_prot,'Value');
-     mod_phos = list1(m);
-    
-     %select disposition
-     list2 = get(handles.pop_dispo,'String');
-     pr = get(handles.pop_dispo,'Value');
-     disposition = list2(pr);
-    
-     %select modulation phosphene
-     list3 = get(handles.pop_mod_phos,'String');
-     ph = get(handles.pop_mod_phos,'Value');
-     mod_prot = list3(ph);
-        
-     %select type map
-     list4 = get(handles.pop_type,'String');
-     ty = get(handles.pop_type,'Value');
-     type_map = list4(ty);
+      
+      
+      
+      
+      
+      
+     Con_Panel_CloseRequestFcn(hObject, eventdata, handles,dati);
+% %       update_gui(dati);
+%       update_gui(hObject, eventdata, handles,dati)
+%       
+%       
+%       
+%       handles.date.num_elec_r = str2num(get(handles.edit_elec_r,'String'));
+%      handles.date.num_elec_c = str2num(get(handles.edit_elec_c,'String'));
+%      handles.date.dim_elec = str2num(get(handles.edit_dim,'String'));
+%      handles.date.r_space = str2num(get(handles.edit_space,'String'));
+%      handles.date.r_time = str2num(get(handles.edit_time,'String'));
+%      handles.date.num_phos_r = str2num(get(handles.edit_phos_r,'String'));
+%      handles.date.num_phos_c = str2num(get(handles.edit_phos_c,'String'));
+%      handles.date.h = str2num(get(handles.edit_h,'String'));
+%      handles.date.k = str2num(get(handles.edit_k,'String'));
+%           
+%      %select modulation prothesis
+%      list1 = get(handles.pop_mod_prot,'String');
+%      m = get(handles.pop_mod_prot,'Value');
+%      handles.date.mod_phos = list1(m);
+%     
+%      %select disposition
+%      list2 = get(handles.pop_dispo,'String');
+%      pr = get(handles.pop_dispo,'Value');
+%      handles.date.disposition = list2(pr);
+%     
+%      %select modulation phosphene
+%      list3 = get(handles.pop_mod_phos,'String');
+%      ph = get(handles.pop_mod_phos,'Value');
+%      handles.date.mod_prot = list3(ph);
+%         
+%      %select type map
+%      list4 = get(handles.pop_type,'String');
+%      ty = get(handles.pop_type,'Value');
+%      handles.date.type_map = list4(ty);
+%      
+%      set(handles.text1A,'String',num2str(10));
      
 %      guidata(handles.Main,handles);
 %      set(handles.Main.uipanel1,'Enable', 'on')
@@ -325,3 +351,13 @@ function edit_k_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes when user attempts to close Con_Panel.
+function varagout=Con_Panel_CloseRequestFcn(hObject, eventdata, handles,varargin)
+% hObject    handle to Con_Panel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: delete(hObject) closes the figure
+delete(hObject);
