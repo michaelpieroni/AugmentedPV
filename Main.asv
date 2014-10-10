@@ -82,8 +82,8 @@ varargout{1} = handles.output;
 % pixel e mm
 
 function date=initialize_gui(hObject, eventdata, handles)
-% % Inizialize the variables and set the text to zero
 
+% inizialize the variables and set the text    
     set(handles.text_eler,'String',num2str(0));
     set(handles.text_elec,'String',num2str(0));
     set(handles.text_dim,'String',num2str(0));
