@@ -61,7 +61,7 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 date = initialize_gui(hObject, eventdata, handles);
-%date=initialize_gui(hObject, eventdata, handles);
+
 % UIWAIT makes Main wait for user response (see UIRESUME)
 % uiwait(handles.Main);
 
@@ -81,7 +81,7 @@ varargout{1} = handles.output;
 %H e K vengono utilizzati come passo di campionamento per il passaggio tra
 % pixel e mm
 
-function date=initialize_gui(hObject, eventdata, handles)
+function date = initialize_gui(hObject, eventdata, handles)
 % % Inizialize the variables and set the text to zero
 
     set(handles.text_eler,'String',num2str(0));
@@ -121,6 +121,7 @@ function date=initialize_gui(hObject, eventdata, handles)
 % end
 
 function update_gui(hObject, eventdata, handles,varargin)
+
     dati = varargin{1};
     set(handles.text_eler,'String',dati.numel_r);
     set(handles.text_elec,'String',dati.numel_c);
@@ -139,8 +140,21 @@ function update_gui(hObject, eventdata, handles,varargin)
     
 % --- Executes on button press in Play.
 function Play_Callback(hObject, eventdata, handles)
-
-
+    
+    box_margin{1} = date_numel_r;
+    box_margin{2} = dati.numel_c;
+    box_margin{3} = date.numph_r;
+    box_margin{4} = date.numph_c;
+    vidobj = VideoReader('videoprova.avi');
+    photogram = vidobj.NumberOfFrames;
+    vid = vidobj(:,:,:);
+    for i=1:photogram
+        [M(:,:,i)]=spvmain(vid(:,:,i),dati.type_map,dati.modul_prot,dati.h,dati.k,box_margin); 
+    end;
+    x = permute(M,[1 2 4 3 ]);  
+    mplay(x); 
+    
+    
 % --- Executes on button press in Stop.
 function Stop_Callback(hObject, eventdata, handles)
 
@@ -171,20 +185,20 @@ function Exit_Callback(hObject, eventdata, handles)
 
 % --------------------------------------------------------------------
 function Control_Panel_Callback(hObject, eventdata, handles)
- dati=ins_data(handles);
+ date= ins_data(handles);
  
   
 
 % --- Executes on button press in Import.
 function Import_Callback(hObject, eventdata, handles)
     
-    box_margin{1} = handles.date.num_elec_r;
-    box_margin{2} = handles.date.num_elec_c;
-    box_margin{3} = handles.date.num_phos_r;
-    box_margin{4} = handles.date.num_phos_c;
+    box_margin{1} = date_numel_r;
+    box_margin{2} = dati.numel_c;
+    box_margin{3} = date.numph_r;
+    box_margin{4} = date.numph_c;
     
     %spvmain( M,handles.date.type_map, handles.date.mod_phos , handles.date.h, handles.date.k,box_margins )
-    
-    guidata(object_handle,handles.data)
+    %
+%     guidata(object_handle,handles.data)
 
 

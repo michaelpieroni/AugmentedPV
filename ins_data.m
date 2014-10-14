@@ -139,23 +139,23 @@ function push_insert_Callback(hObject, eventdata, handles)
 % %     Con_Panel_CloseRequestFcn(hObject, eventdata, handles,dati);
  
 %       update_gui(dati);
- %      update_gui(hObject, eventdata, handles,dati)
+       update_gui(hObject, eventdata, handles,dati)
  
  %TO DO: doesn't switch variables to update_gui in Main.m
  
-       set(handles.text_eler,'String',dati.numel_r);
-       set(handles.text_elec,'String',dati.numel_c);
-       set(handles.text_dim,'String',dati.dim);
-       set(handles.text_disp,'String',dati.disposition);
-       set(handles.text_sp,'String',dati.r_space);
-       set(handles.text_tr,'String',dati.r_time);
-       set(handles.text_phr,'String',dati.numph_r);
-       set(handles.text_phc,'String',dati.numph_c);
-       set(handles.text_h,'String',dati.k);
-       set(handles.text_k,'String',dati.h);
-       set(handles.text_ty,'String',dati.type_map);
-       set(handles.text_mpr,'String',dati.modul_prot);
-       set(handles.text_mph,'String',dati.modul_phos);
+%        set(handles.text_eler,'String',dati.numel_r);
+%        set(handles.text_elec,'String',dati.numel_c);
+%        set(handles.text_dim,'String',dati.dim);
+%        set(handles.text_disp,'String',dati.disposition);
+%        set(handles.text_sp,'String',dati.r_space);
+%        set(handles.text_tr,'String',dati.r_time);
+%        set(handles.text_phr,'String',dati.numph_r);
+%        set(handles.text_phc,'String',dati.numph_c);
+%        set(handles.text_h,'String',dati.k);
+%        set(handles.text_k,'String',dati.h);
+%        set(handles.text_ty,'String',dati.type_map);
+%        set(handles.text_mpr,'String',dati.modul_prot);
+%        set(handles.text_mph,'String',dati.modul_phos);
 
 %      set(handles.text1A,'String',num2str(10));
      
