@@ -60,7 +60,7 @@ handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
-date = initialize_gui(hObject, eventdata, handles);
+initialize_gui(hObject, eventdata, handles);
 
 % UIWAIT makes Main wait for user response (see UIRESUME)
 % uiwait(handles.Main);
@@ -81,7 +81,7 @@ varargout{1} = handles.output;
 %H e K vengono utilizzati come passo di campionamento per il passaggio tra
 % pixel e mm
 
-function date = initialize_gui(hObject, eventdata, handles)
+function data = initialize_gui(hObject, eventdata, handles)
 % % Inizialize the variables and set the text to zero
 
     set(handles.text_eler,'String',num2str(0));
@@ -97,19 +97,8 @@ function date = initialize_gui(hObject, eventdata, handles)
     set(handles.text_phc,'String',num2str(0));
     set(handles.text_h,'String',num2str(0));
     set(handles.text_k,'String',num2str(0));
-    date.ele_c = 0;
-    date.ele_r = 0;
-    date.dim_elec = 0;
-    date.r_space = 0;
-    date.r_time = 0;
-    date.h = 0;
-    date.k = 0;
-    date.phos_r = 0;
-    date.phos_c = 0;
-    date.mod_phos = '';
-    date.disposition ='';
-    date.mod_prot = '';
-    date.type_map = '';
+    
+    
     
     
 % PERMETTE DI FAR SCORRERE IL VIDEO UN FRAME ALLA VOLTA
@@ -140,15 +129,57 @@ function update_gui(hObject, eventdata, handles,varargin)
     
 % --- Executes on button press in Play.
 function Play_Callback(hObject, eventdata, handles)
+    %
+    % TODO: Get the parameters for the simulation of Phosphenated Vision
+    % At the moment use the following parameters
+    % Data for electrode
+    data.ele_c = 10;
+    data.ele_r = 10;
+    data.dim_elec = 10; %um
+    data.r_space = 0;
+    data.r_time = 0;
+    data.h = 10;
+    data.k = 10;
+    %Data for phosphene
+    data.phos_r = 10;
+    data.phos_c = 10;
+    data.mod_phos = '';
+    data.disposition ='';
+    data.mod_prot = '';
+    data.type_map = '';
+
+    box_margin{1} = data.ele_c;
+    box_margin{2} = data.ele_r;
+    box_margin{3} = data.phos_r;
+    box_margin{4} = data.phos_c;
     
-    box_margin{1} = date_numel_r;
-    box_margin{2} = dati.numel_c;
-    box_margin{3} = date.numph_r;
-    box_margin{4} = date.numph_c;
-    vidobj = VideoReader('videoprova.avi');
-    photogram = vidobj.NumberOfFrames;
+    %% GET the 'right' input data
+    
+    % TODO: import a filename and a filepath
+    % At the moment use the default video 'videoprova.avi'
+    
+    if not(exist(vidobj))
+        vidobj = VideoReader('videoprova.avi');
+    end
+    % Get same input data parameters
+%     nof = vidobj.NumberOfFrames; %number of frame for the overall video
+    nof = get(vidobj,'NumberOfFrames'); %number of frame for the overall video
+    
+    nof_new=10;
+    vidobj = set(vidobj,'NumberOfFrames'); %number of frame for the overall video
+    
+    % Add other data: bitsperpixel, width ,height.....
+    
+    % Convert VideoFormat to GrayScale
+    
+    
+    %% SEE the example at....
+    
+    %http://www.mathworks.com/help/vision/ref/vision.videofilereader-class.html
+    
+    
     vid = vidobj(:,:,:);
-    for i=1:photogram
+    for i=1:nof
         [M(:,:,i)]=spvmain(vid(:,:,i),dati.type_map,dati.modul_prot,dati.h,dati.k,box_margin); 
     end;
     x = permute(M,[1 2 4 3 ]);  
