@@ -22,7 +22,7 @@ function varargout = ins_data(varargin)
 
 % Edit the above text to modify the response to help ins_data
 
-% Last Modified by GUIDE v2.5 08-Oct-2014 18:06:12
+% Last Modified by GUIDE v2.5 18-Oct-2014 09:21:16
 
 % Begin initialization code - DO NOT EDIT
 
@@ -74,19 +74,19 @@ guidata(hObject, handles);
 % UIWAIT makes ins_data wait for user response (see UIRESUME)
 % uiwait(handles.Con_Panel);
 
-function inizialize_gui(date)
-    date.num_elec_r = 0;
-    date.num_elec_c = 0;
-    date.num_phos_r = 0;
-    date.num_phos_c = 0;
-    date.dim_elec = 0;
-    date.disposition = '';
-    date.r_space = 0;
-    date.r_time = 0;
-    date.modul_prot = '';
-    date.h = 0;
-    date.k = 0;
-    date.modul_phos = '';
+function inizialize_gui(data)
+    data.num_elec_r = 0;
+    data.num_elec_c = 0;
+    data.num_phos_r = 0;
+    data.num_phos_c = 0;
+    data.dim_elec = 0;
+    data.profile = '';
+    data.r_space = 0;
+    data.r_time = 0;
+    data.modul_prot = '';
+    data.h = 0;
+    data.k = 0;
+    data.modul_phos = '';
 
 % --- Outputs from this function are returned to the command line.
 function varargout = ins_data_OutputFcn(hObject, eventdata, handles) 
@@ -101,46 +101,46 @@ varargout{1} = handles.output;
 
 % --- Executes on button press in push_insert.
 function push_insert_Callback(hObject, eventdata, handles)
-%      if isempty(edit_dim) || isempty(edit_space) || isempty(edit_num) || isempty(edit_time)|| isempty(pop_mod_prot)|| isempty(pop_mod_phos)|| isempty(pop_dispo)|| isempty(type_map)
+%      if isempty(edit_dim) || isempty(edit_space) || isempty(edit_num) || isempty(edit_time)|| isempty(pop_mod_prot)|| isempty(pop_mod_phos)|| isempty(pop_profile)|| isempty(type_map)
 %         errordlg('Please, Fill In On Fiel','Error')
 %      else
     
-      dati.numel_r = str2num(get(handles.edit_elec_r,'String'));
-      dati.numel_c = str2num(get(handles.edit_elec_c,'String')); 
-      dati.dim = str2num(get(handles.edit_dim,'String'));
-      dati.r_space = str2num(get(handles.edit_space,'String'));
-      dati.r_time = str2num(get(handles.edit_time,'String'));
-      dati.numph_r = str2num(get(handles.edit_phos_r,'String'));
-      dati.numph_c = str2num(get(handles.edit_phos_c,'String'));
-      dati.h = str2num(get(handles.edit_h,'String'));
-      dati.k = str2num(get(handles.edit_k,'String'));
+      handles.data.numel_r = str2num(get(handles.edit_elec_r,'String'));
+      handles.data.numel_c = str2num(get(handles.edit_elec_c,'String')); 
+      handles.data.dim = str2num(get(handles.edit_dim,'String'));
+      handles.data.r_space = str2num(get(handles.edit_space,'String'));
+      handles.data.r_time = str2num(get(handles.edit_time,'String'));
+      handles.data.numph_r = str2num(get(handles.edit_phos_r,'String'));
+      handles.data.numph_c = str2num(get(handles.edit_phos_c,'String'));
+      handles.data.h = str2num(get(handles.edit_h,'String'));
+      handles.data.k = str2num(get(handles.edit_k,'String'));
       
       %select modulation prothesis
       list1 = get(handles.pop_mod_prot,'String');
       m = get(handles.pop_mod_prot,'Value');
-      dati.mod_phos = list1(m);
+      handles.data.mod_phos = list1(m);
 
       %select disposition
-      list2 = get(handles.pop_dispo,'String');
-      pr = get(handles.pop_dispo,'Value');
-      dati.disposition = list2(pr);
+      list2 = get(handles.pop_profile,'String');
+      pr = get(handles.pop_profile,'Value');
+      handles.data.profile = list2(pr);
     
       %select modulation phosphene
       list3 = get(handles.pop_mod_phos,'String');
       ph = get(handles.pop_mod_phos,'Value');
-      dati.mod_prot = list3(ph);
+      handles.data.mod_prot = list3(ph);
         
       %select type map
       list4 = get(handles.pop_type,'String');
       ty = get(handles.pop_type,'Value');
-      dati.type_map = list4(ty);
+      handles.data.type_map = list4(ty);
            
 % %     With Con_Panel_CloseRequestFcn is destroyed the Insert&Close Button   
 % %     Con_Panel_CloseRequestFcn(hObject, eventdata, handles,dati);
  
 %       update_gui(dati);
-       update_gui(hObject, eventdata, handles,dati)
- 
+       update_gui(hObject, eventdata, handles);
+       
  %TO DO: doesn't switch variables to update_gui in Main.m
  
 %        set(handles.text_eler,'String',dati.numel_r);
@@ -205,6 +205,10 @@ end
 
 
 function edit_elec_r_Callback(hObject, eventdata, handles)
+%% At the moment: the number phosfene is equal the number electrode 
+
+a = get(handles.edit_elec_r,'String');
+set(handles.edit_phos_r,'String',a);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -251,12 +255,12 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in pop_dispo.
-function pop_dispo_Callback(hObject, eventdata, handles)
+% --- Executes on selection change in pop_profile.
+function pop_profile_Callback(hObject, eventdata, handles)
     
 
 % --- Executes during object creation, after setting all properties.
-function pop_dispo_CreateFcn(hObject, eventdata, handles)
+function pop_profile_CreateFcn(hObject, eventdata, handles)
 
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
@@ -278,8 +282,6 @@ end
 % --- Executes on selection change in pop_type.
 function pop_type_Callback(hObject, eventdata, handles)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns pop_type contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from pop_type
 
 
 % --- Executes during object creation, after setting all properties.
@@ -294,9 +296,10 @@ end
 
 
 function edit_elec_c_Callback(hObject, eventdata, handles)
-% 
-% Hints: get(hObject,'String') returns contents of edit_elec_c as text
-%        str2double(get(hObject,'String')) returns contents of edit_elec_c as a double
+%% At the moment: the number phosfene is equal the number electrode 
+
+a = get(handles.edit_elec_c,'String');
+set(handles.edit_phos_c,'String',a);
 
 
 % --- Executes during object creation, after setting all properties.

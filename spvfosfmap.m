@@ -17,7 +17,9 @@ switch (type_map)
         map((r+1:2*r+1:rm-r),(c+1:2*c+1:cm-c))=1; %metto 1 in corrispondenza dell fosfene
         varargout{1}=r; 
         varargout{2}=c;
-    case ('notuniform')
+        varargout{3}=rm;
+        varargout{4}=cm;
+    case ('not uniform')
         n=varargin{1}; %numero di fosfeni
         r=varargin{2}; %numero di righe della mappa di fosfeni
         c=varargin{3}; %numero di colonne della mappa di fosfeni

@@ -1,10 +1,11 @@
-function [ varargout ] = spvfosfprocessor( map,im,ch,type_map,h,k,varargin )
+function [ varargout ] = spvfosfprocessor( map,im,ch,type_map,h,k,rim,cim,dim_phos )
 %prende in ingresso la mappa di fosfeni, l'immagine,  un char ovvero ch che
 %puo essere inte, amp o intamp. nel caso uniform varargin conterra r,c
 %ovvero le righe e le colonne di ogni fosfene.
-
-[rm,cm]=size(map);
-[rim,cim]=size(im);
+r=dim_phos{1};
+c=dim_phos{2};
+rm=dim_phos{3};
+cm=dim_phos{4};
 [x,y]=find(map); % trova le coordinate dei fosfeni
 im=double(im);
 amplitude=h*ones(length(x),1); %crea il vettore dell'ampiezza moltiplicato per un parametro imposto dall'utente
@@ -12,8 +13,6 @@ intensity=k*ones(length(x),1); %crea il vettore dell'intensità moltiplicato per 
 tmp=max(std(im));
 switch(type_map)
     case{'uniform'}
-        r=varargin{1};
-        c=varargin{2};
         d=2*min(r,c);
         lr=round(r*rim/rm);
         lc=round(c*cim/cm);
@@ -86,13 +85,5 @@ switch(type_map)
         end
         
 end
-
-        
-        
-        
-        
-
-
-
 end
 
