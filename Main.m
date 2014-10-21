@@ -175,10 +175,12 @@ function Play_Callback(hObject, eventdata, handles)
     
     for i = 1:nof
         SingleFrame = read(vid,i);
-        SingleFrame = rgb2gray(SingleFrame);
+        axes(handles.axesReal)
+        mplay(SingleFrame)
+        FrameModified = rgb2gray(SingleFrame);
         %problemi sulle funzioni di Salvo in spvfosfprocessor
-        [vidFin(:,:,i)]=spvmain(SingleFrame(:,:,i),dati.type_map,dati.modul_prot,dati.h,dati.k,box_margin,rim,cim);
-        axes(handels.axesPhosfened);
+        [vidFin(:,:,i)]=spvmain(FrameModified(:,:,i),dati.type_map,dati.modul_prot,dati.h,dati.k,box_margin,rim,cim);
+        axes(handels.axesPhosfened)
         mplay(vidFin)
     end
     
