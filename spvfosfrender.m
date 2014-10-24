@@ -7,8 +7,8 @@ function [ m ] = spvfosfrender( map,type_map,intensity,amplitude,varargin )
 m=zeros(size(map));
 switch(type_map)
     case{'uniform'}
-            r=varargin{1}
-            c=varargin{2}
+            r=varargin{1};
+            c=varargin{2};
             lx = (-r):(r); 
             ly = (-c):(c); 
             [lX,lY] = meshgrid(lx,ly);

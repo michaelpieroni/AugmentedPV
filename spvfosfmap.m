@@ -11,7 +11,7 @@ switch (type_map)
         fc=varargin{2}; %numero di fosfeni per colonna
         r=varargin{3};  %nuero di righe
         c=varargin{4};  %numero di colonne
-        rm=fr*(2*r+1);  %mi calcolo il numero dirighe della mappa di fosfeni
+        rm=fr*(2*r+1);  %mi calcolo il numero di righe della mappa di fosfeni
         cm=fc*(2*c+1);  %mi calcolo il numero di colonne della mappa di fosfeni
         map=sparse(rm,cm);  %creo la mappa di fosfeni come matrice sparsa
         map((r+1:2*r+1:rm-r),(c+1:2*c+1:cm-c))=1; %metto 1 in corrispondenza dell fosfene

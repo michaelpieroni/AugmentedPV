@@ -22,7 +22,7 @@ function varargout = Main(varargin)
 
 % Edit the above text to modify the response to help Main
 
-% Last Modified by GUIDE v2.5 22-Oct-2014 11:07:12
+% Last Modified by GUIDE v2.5 22-Oct-2014 16:34:42
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -78,18 +78,17 @@ varargout{1} = handles.output;
 %H e K vengono utilizzati come passo di campionamento per il passaggio tra
 % pixel e mm
 
-function data = initialize_gui(hObject, eventdata, handles)
+function initialize_gui(hObject, eventdata, handles)
 % % Inizialize the variables and set the text to zero
-
     set(handles.text_eler,'String',num2str(0));
     set(handles.text_elec,'String',num2str(0));
     set(handles.text_dim,'String',num2str(0));
     set(handles.text_profile,'String',num2str(0));
     set(handles.text_sp,'String',num2str(0));
     set(handles.text_tr,'String',num2str(0));
-    set(handles.text_mpr,'String',' ');
-    set(handles.text_mph,'String',' ');
-    set(handles.text_ty,'String',' ');
+    set(handles.text_mpr,'String','Voltage');
+    set(handles.text_mph,'String','Amplitude');
+    set(handles.text_ty,'String','Uniform');
     set(handles.text_phr,'String',num2str(0));
     set(handles.text_phc,'String',num2str(0));
     set(handles.text_h,'String',num2str(0));
@@ -97,11 +96,11 @@ function data = initialize_gui(hObject, eventdata, handles)
     
     
  
-function update_gui(hObject, eventdata, handles,dati)
+function update_gui(hObject, eventdata, handles,data)
 
-    %dati = varargin{1};
-    set(handles.text_eler,'String',handles.data.numel_r);
-    set(handles.text_elec,'String',handles.data.numel_c);
+    data = varargin{1};
+    set(handles.text_eler,'String',data.numel_r);
+    set(handles.text_elec,'String',data.numel_c);
     set(handles.text_dim,'String',handles.data.dim);
     set(handles.text_profile,'String',handles.data.profile);
     set(handles.text_sp,'String',handles.data.r_space);
@@ -131,42 +130,33 @@ function Play_Callback(hObject, eventdata, handles)
     %Data for phosphene
     data.phos_r = 10;
     data.phos_c = 10;
-    data.mod_phos = '';
-    data.profile ='';
-    data.mod_prot = '';
-    data.type_map = '';
+    data.mod_phos = 'amplitude';
+    data.profile ='circle';
+    data.mod_prot = 'voltage';
+    data.type_map = 'uniform';
 
-    % % GET the 'right' input data
-    
-    
-    if not(exist('vid')) 
-        %% i don't know if it is possible
-        if isfield(handles,'FileName')
-             vid = VideoReader(handles.FileName);
-        else
-            vid = VideoReader('videoprova.avi');
-        end
-    end
+    PathVid = get(handles.text_path,'String');
+    NameVid = get(handles.text_namevid,'String');
+
+    path_old = cd(PathVid);
         
+    if not(exist('vid')) 
+       vid = vision.VideoFileReader(NameVid);
+    end
+    cd(path_old)
+    
     %% Get same input data parameters
-    nof = get(vid,'NumberOfFrames'); %number of frame for the overall video
-    nof_new=10;
-    v_height = get(vid,'Height');    %height video
-    v_width = get(vid,'Width');      %width video
-    v_frate = get(vid,'FrameRate');  %number of frame for second
-    v_bitpixel = get(vid,'BitsPerPixel'); 
-    v_format = get(vid,'VideoFormat'); % Format of Video 
+    %nof =                                      %number of frame for the overall video
+    vidHeight = vid.info.VideoSize(2);      %Height video
+    vidWidth = vid.info.VideoSize(1);       %Width video
+    vidFrate = vid.info.VideoFrameRate;     %Number of frame for second
+    vidFormat = vid.info.VideoFormat;       %Format of Video 
     
     %% Calculating the number of pixel for each phosfene
-%     c = handles.data.phos_c;
-%     pixph_c = ceil(v_width/c);
-%     r = handles.data.phos_r;
-%     pixph_r = ceil(v_heigth/r);
-    
     c = data.phos_c;
-    pixph_c = ceil(v_width/c);
+    pixph_c = ceil(vidWidth/c);
     r = data.phos_r;
-    pixph_r = ceil(v_height/r);
+    pixph_r = ceil(vidHeight/r);
     
     
     %% Insert the variables in the box to pass in the funtion
@@ -176,33 +166,65 @@ function Play_Callback(hObject, eventdata, handles)
     box_margin{4} = pixph_c;
     
     %% Convert VideoFormat to GrayScale
-    
-    
+        
     %% SEE the example at....
     % http://www.mathworks.com/help/vision/ref/vision.videofilereader-class.html
 
     %% Convert video of phosfenes
     
     %% SEE EXAMPLE in http://www.mathworks.com/help/vision/examples/video-display-in-a-custom-user-interface.html
-    
-    for i = 1:nof
-        SingleFrame = read(vid,i);
-        axes(handles.axesReal)
-        figure,imshow(SingleFrame)
-        mplay(SingleFrame)
-        FrameModified = rgb2gray(SingleFrame);
-        %problemi sulle funzioni di Salvo in spvfosfprocessor
-        [vidFin(:,:,i)]=spvmain(FrameModified(:,:,i),dati.type_map,dati.modul_prot,dati.h,dati.k,box_margin,rim,cim);
-        axes(handels.axesPhosfened)
-        mplay(vidFin)
-    end
-    
-    % provare le funzioni di Salvo perchè danno problemi con il passaggio
-    % delle varibili
-    
-%     vidFin = permute(M,[1 2 4 3 ]);  
-%     mplay(x); 
   
+    
+%     try
+            % Check the status of play button
+%             isTextStart = strcmp(hObject.String,'Play');
+%             isTextCont  = strcmp(hObject.String,'Continue');
+%             if isTextStart
+%                Two cases: (1) starting first time, or (2) restarting
+%                Start from first frame
+%                if isDone(vid)
+%                   reset(vid);
+%                end
+%             end
+%             if (isTextStart || isTextCont)
+%                 hObject.String = 'Pause';
+%             else
+%                 hObject.String = 'Continue';
+%             end
+
+
+            % Rotate input video frame and display original and rotated
+            % frames on figure
+%             while strcmp(hObject.String, 'Pause') && ~isDone(vid)
+
+            %TODO: verificare la corretta assegnazione di v_height e v_width 
+            while ~isDone(vid)  %|| Stop_KeyPressFcn(hObject, eventdata, handles)
+                % Get input video frame and phosfened frame
+                frame = step(vid); 
+                FrameGray = rgb2gray(frame);
+                [FrameModified]=spvmain(FrameGray,data.type_map,data.mod_prot,data.h,data.k,box_margin,vidHeight,vidWidth);
+ 
+                % Display input video frame on axis
+                showFrameOnAxis(handles.axisReal, frame);
+                % Display Phosfened video from on axis
+                showFrameOnAxis(handles.axisPhosfened, FrameModified);
+            end
+
+            % When video reaches the end of file, display "Start" on the
+            % play button.
+%             if isDone(vid)
+%                hObject.String = 'Play';
+%             end
+%        catch ME
+%            % Re-throw error message if it is not related to invalid handle
+%            if ~strcmp(ME.identifier, 'MATLAB:class:InvalidHandle')
+%                rethrow(ME);
+%            end
+%        end 
+%     
+%     
+    
+    
 % --- Executes on button press in Stop.
 function Stop_Callback(hObject, eventdata, handles)
 
@@ -242,28 +264,16 @@ function ConvertImageElectrode(hObject, eventdata, handles)
  % --- Executes on button press in Import.
 function Import_Callback(hObject, eventdata, handles)
  %% Import the file name and path of video
- cd_now=cd();
-[FileName,PathName] = uigetfile({'*.avi';'*.mp4'},'Select the VIDEO file',cd_now);
-handles.filevid = FileName;
-handles.path = PathName;
-%%ConvertImageElectrode(hObject, eventdata, handles)
+path_now = cd();
+[FileName,PathName] = uigetfile({'*.avi';'*.mp4'},'Select the VIDEO file',path_now);
+%set StaticText (invisible) with path and name of just selected video 
+set(handles.text_path,'String',PathName);
+set(handles.text_namevid,'String',FileName);
 
-
-
-%spvmain( M,handles.date.type_map, handles.date.mod_phos , handles.date.h, handles.date.k,box_margins )
-    
+ 
    
 
 
-
-
-%% PERMETTE DI FAR SCORRERE IL VIDEO UN FRAME ALLA VOLTA
-% obj = mmreader ( 'c: \ vid \ Akiyo.mp4' ); 
-% nFrames = obj . NumberOfFrames , 
-% per k = 1 : nFrames
-%     img = read ( obj , k ); 
-%     figura ( 1 ), imshow ( IMG , []); 
-% end
 
 
 % --- Executes on button press in Next.
@@ -275,8 +285,17 @@ function Next_Callback(hObject, eventdata, handles)
 
 % --- Executes on key press with focus on Import and none of its controls.
 function Import_KeyPressFcn(hObject, eventdata, handles)
-
 % hObject    handle to Import (see GCBO)
+% eventdata  structure with the following fields (see UICONTROL)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on key press with focus on Stop and none of its controls.
+function Stop_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to Stop (see GCBO)
 % eventdata  structure with the following fields (see UICONTROL)
 %	Key: name of the key that was pressed, in lower case
 %	Character: character interpretation of the key(s) that was pressed

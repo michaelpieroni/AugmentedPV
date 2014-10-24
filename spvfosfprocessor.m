@@ -1,4 +1,4 @@
-function [ varargout ] = spvfosfprocessor( map,im,ch,type_map,h,k,rim,cim,dim_phos )
+function [ amplitude,intensity ] = spvfosfprocessor( map,im,ch,type_map,h,k,rim,cim,dim_phos )
 %prende in ingresso la mappa di fosfeni, l'immagine,  un char ovvero ch che
 %puo essere inte, amp o intamp. nel caso uniform varargin conterra r,c
 %ovvero le righe e le colonne di ogni fosfene.

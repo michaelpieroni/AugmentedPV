@@ -64,9 +64,10 @@ handles.output = hObject;
 
 % % Problem with these 3 lines
 
-% %  hM=varargin{1};
-% %  a=num2str(get(hM.text_eler,'String'));
-% %  set(handles.edit_elec_r,'String',a(1));
+cont_textMain = varargin{1};
+inizialize_edit(cont_textMain,handles)
+% a=num2str(get(cont_textMain.text_eler,'String'));
+% set(handles.edit_elec_r,'String',a(1));
 
 % Update handles structure
 guidata(hObject, handles);
@@ -74,7 +75,90 @@ guidata(hObject, handles);
 % UIWAIT makes ins_data wait for user response (see UIRESUME)
 % uiwait(handles.Con_Panel);
 
-function inizialize_gui(data)
+function inizialize_edit(ctM,handles)
+%% Set Edit with the value of the Text(Main.m)
+%Num Row of Electrode
+r = num2str(get(ctM.text_eler,'String'));
+set(handles.edit_elec_r,'String',r(1));
+
+%Num Column of Electrode
+c = num2str(get(ctM.text_elec,'String'));
+set(handles.edit_elec_c,'String',c(1));
+
+%Dimension Electrode
+d = num2str(get(ctM.text_dim,'String'));
+set(handles.edit_dim,'String',d(1));
+
+%Space Response
+sp = num2str(get(ctM.text_sp,'String'));
+set(handles.edit_space,'String',sp(1));
+
+%Time Response
+ti = num2str(get(ctM.text_tr,'String'));
+set(handles.edit_time,'String',ti(1));
+
+%Num row of Phosfenes
+pr = num2str(get(ctM.text_phr,'String'));
+set(handles.edit_phos_r,'String',pr(1));
+
+%Num Column of Phosfenes
+pc = num2str(get(ctM.text_phc,'String'));
+set(handles.edit_phos_c,'String',pc(1));
+
+%H e K: parameters used to convert the pixels in mm of electrodes
+h = num2str(get(ctM.text_h,'String'));
+set(handles.edit_h,'String',h(1));
+k = num2str(get(ctM.text_k,'String'));
+set(handles.edit_k,'String',k(1));
+
+%Type Map
+ty = get(ctM.text_ty,'String');
+switch (ty)
+    case {' '}
+        set(handles.pop_type,'Value',1);
+    case {'Uniform'}
+        set(handles.pop_type,'Value',2);
+    case {'Not Uniform'}
+        set(handles.pop_type,'Value',3);
+end
+
+%Modulation Prothesis
+mpr = get(ctM.text_mpr,'String');
+switch (mpr)
+    case {' '}
+        set(handles.pop_mod_prot,'Value',1);
+    case {'Voltage'}
+        set(handles.pop_mod_prot,'Value',2);
+    case {'Current'}
+        set(handles.pop_mod_prot,'Value',3);
+end
+
+%Modulation Phosfenes
+mp = get(ctM.text_mph,'String');
+switch (mp)
+    case {' '}
+        set(handles.mod_phos,'Value',1);
+    case {'Amplitude'}
+        set(handles.mod_phos,'Value',2);
+    case {'Intensity'}
+        set(handles.mod_phos,'Value',3);
+    case {'Amplitude & Intensity'}
+        set(handles.mod_phos,'Value',4);
+end
+
+%Profile of Electrodes
+p = get(ctM.text_profile,'String');
+switch (p)
+    case {' '}
+        set(handles.pop_profile,'Value',1);
+    case {'Square'}
+        set(handles.pop_profile,'Value',2);
+    case {'Circle'}
+        set(handles.pop_profile,'Value',3);
+end        
+            
+        
+function inizialize_variable(data)
     data.num_elec_r = 0;
     data.num_elec_c = 0;
     data.num_phos_r = 0;
@@ -135,11 +219,8 @@ function push_insert_Callback(hObject, eventdata, handles)
       ty = get(handles.pop_type,'Value');
       handles.data.type_map = list4(ty);
            
-% %     With Con_Panel_CloseRequestFcn is destroyed the Insert&Close Button   
-% %     Con_Panel_CloseRequestFcn(hObject, eventdata, handles,dati);
- 
-%       update_gui(dati);
-       update_gui(hObject, eventdata, handles);
+%        update_gui(dati);
+%        update_gui(hObject, eventdata, handles,data);
        
  %TO DO: doesn't switch variables to update_gui in Main.m
  
@@ -177,7 +258,7 @@ function push_clear_Callback(hObject, eventdata, handles)
     set(handles.edit_k,'String',' ');
     
     % TO DO: set popup to empty
-    inizialize_gui(handles)
+    inizialize_variable(handles)
 
 
 function edit_type_Callback(hObject, eventdata, handles)

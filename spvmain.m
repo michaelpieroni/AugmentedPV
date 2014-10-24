@@ -10,8 +10,6 @@ switch (type_map)
          fc = box_margins{2}; %numero colonne fosfeni
          r = box_margins{3};  %distanza lungo le righe
          c = box_margins{4};  %distanza lungo le colonne
-         % in questo caso la dimensione della mappa di fosfeni sarà
-         % (fr*(2r+1),fc*(2c+1))
          [ map,r,c,rm,cm ] = spvfosfmap( type_map,fr,fc,r,c );  %richiama la mappa i fosfeni
          dim_phos{1}=r;
          dim_phos{2}=c;
