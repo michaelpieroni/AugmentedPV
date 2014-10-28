@@ -66,8 +66,6 @@ handles.output = hObject;
 
 cont_textMain = varargin{1};
 inizialize_edit(cont_textMain,handles)
-% a=num2str(get(cont_textMain.text_eler,'String'));
-% set(handles.edit_elec_r,'String',a(1));
 
 % Update handles structure
 guidata(hObject, handles);
@@ -137,13 +135,13 @@ end
 mp = get(ctM.text_mph,'String');
 switch (mp)
     case {' '}
-        set(handles.mod_phos,'Value',1);
+        set(handles.pop_mod_phos,'Value',1);
     case {'Amplitude'}
-        set(handles.mod_phos,'Value',2);
+        set(handles.pop_mod_phos,'Value',2);
     case {'Intensity'}
-        set(handles.mod_phos,'Value',3);
+        set(handles.pop_mod_phos,'Value',3);
     case {'Amplitude & Intensity'}
-        set(handles.mod_phos,'Value',4);
+        set(handles.pop_mod_phos,'Value',4);
 end
 
 %Profile of Electrodes
@@ -158,19 +156,6 @@ switch (p)
 end        
             
         
-function inizialize_variable(data)
-    data.num_elec_r = 0;
-    data.num_elec_c = 0;
-    data.num_phos_r = 0;
-    data.num_phos_c = 0;
-    data.dim_elec = 0;
-    data.profile = '';
-    data.r_space = 0;
-    data.r_time = 0;
-    data.modul_prot = '';
-    data.h = 0;
-    data.k = 0;
-    data.modul_phos = '';
 
 % --- Outputs from this function are returned to the command line.
 function varargout = ins_data_OutputFcn(hObject, eventdata, handles) 
@@ -218,35 +203,45 @@ function push_insert_Callback(hObject, eventdata, handles)
       list4 = get(handles.pop_type,'String');
       ty = get(handles.pop_type,'Value');
       handles.data.type_map = list4(ty);
-           
-%        update_gui(dati);
-%        update_gui(hObject, eventdata, handles,data);
-       
- %TO DO: doesn't switch variables to update_gui in Main.m
- 
-%        set(handles.text_eler,'String',dati.numel_r);
-%        set(handles.text_elec,'String',dati.numel_c);
-%        set(handles.text_dim,'String',dati.dim);
-%        set(handles.text_disp,'String',dati.disposition);
-%        set(handles.text_sp,'String',dati.r_space);
-%        set(handles.text_tr,'String',dati.r_time);
-%        set(handles.text_phr,'String',dati.numph_r);
-%        set(handles.text_phc,'String',dati.numph_c);
-%        set(handles.text_h,'String',dati.k);
-%        set(handles.text_k,'String',dati.h);
-%        set(handles.text_ty,'String',dati.type_map);
-%        set(handles.text_mpr,'String',dati.modul_prot);
-%        set(handles.text_mph,'String',dati.modul_phos);
-
-%      set(handles.text1A,'String',num2str(10));
+      
+      
+      guidata(hObject,handles.data)
+      salva(handles);
+      close;
+      Main();
      
 %      set(handles.Main.uipanel1,'Enable', 'on')
 %      set(handles.Main.Import,'Enable', 'on')
     
+function salva(handles)
+    %% Save data to file 
+    FileData = table([handles.data.numel_r;...
+                       handles.data.numel_c;...
+                       handles.data.r_space;...
+                       handles.data.dim;...
+                       handles.data.r_time;...
+                       handles.data.numph_r;...
+                       handles.data.numph_c;... 
+                       handles.data.h;...
+                       handles.data.k;
+                       handles.data.mod_phos;...
+                       handles.data.type_map;... 
+                       handles.data.mod_prot;...
+                       handles.data.profile]);
+     cd();
+     writetable(FileData,'data.txt');
+  
+%      uisave({'handles.data'},'data');
+%      [file,path] = uiputfile('data.txt','Save file name');
+%      if file==0
+%         return
+%      end
+%      pathfile=joinseq(path,file);
+%      dlmwrite(pathfile, FileData);
      
-% --- Executes on button press in push_clear.
-
+      
 function push_clear_Callback(hObject, eventdata, handles)
+%%  Clear edit and pop menu
     set(handles.edit_elec_r,'String','');
     set(handles.edit_elec_c,'String','');
     set(handles.edit_phos_r,'String','');
@@ -256,9 +251,11 @@ function push_clear_Callback(hObject, eventdata, handles)
     set(handles.edit_time,'String','');
     set(handles.edit_h,'String',' ');
     set(handles.edit_k,'String',' ');
+    set(handles.pop_profile,'Value',1);
+    set(handles.pop_type,'Value',1);
+    set(handles.pop_mod_phos,'Value',1);
+    set(handles.pop_mod_prot,'Value',1);
     
-    % TO DO: set popup to empty
-    inizialize_variable(handles)
 
 
 function edit_type_Callback(hObject, eventdata, handles)
@@ -286,10 +283,9 @@ end
 
 
 function edit_elec_r_Callback(hObject, eventdata, handles)
-%% At the moment: the number phosfene is equal the number electrode 
-
-a = get(handles.edit_elec_r,'String');
-set(handles.edit_phos_r,'String',a);
+%%  At the moment: the number phosfene is equal the number electrode 
+    a = get(handles.edit_elec_r,'String');
+    set(handles.edit_phos_r,'String',a);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -375,12 +371,10 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function edit_elec_c_Callback(hObject, eventdata, handles)
-%% At the moment: the number phosfene is equal the number electrode 
-
-a = get(handles.edit_elec_c,'String');
-set(handles.edit_phos_c,'String',a);
+%%  At the moment: the number phosfene is equal the number electrode 
+    a = get(handles.edit_elec_c,'String');
+    set(handles.edit_phos_c,'String',a);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -450,6 +444,6 @@ end
 
 
 % --- Executes when user attempts to close Con_Panel.
-function varagout=Con_Panel_CloseRequestFcn(hObject, eventdata, handles,varargin)
+function varagout = Con_Panel_CloseRequestFcn(hObject, eventdata, handles,varargin)
  
 delete(hObject);

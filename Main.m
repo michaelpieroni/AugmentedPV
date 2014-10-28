@@ -60,7 +60,25 @@ handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
-initialize_gui(hObject, eventdata, handles);
+
+%% Used this metod, but doesn't start the execution.
+% handles.data = varargin{1};
+% if not(exist(a))
+%     initialize_gui(hObject, eventdata, handles)
+% else
+%     update_gui(a)
+% end
+
+
+%% Try another metod
+%%TODO
+if exist('data.txt') ~= 2
+    initialize_gui(hObject, eventdata, handles)
+else
+    [var_num,var_string,AllVar] = tblread('data.txt',';');
+    [handles.data] = update_gui(hObject, eventdata, handles,AllVar);
+end
+
 
 % UIWAIT makes Main wait for user response (see UIRESUME)
 % uiwait(handles.Main);
@@ -79,11 +97,11 @@ varargout{1} = handles.output;
 % pixel e mm
 
 function initialize_gui(hObject, eventdata, handles)
-% % Inizialize the variables and set the text to zero
+%%  Inizialize the variables and set the text to zero
     set(handles.text_eler,'String',num2str(0));
     set(handles.text_elec,'String',num2str(0));
     set(handles.text_dim,'String',num2str(0));
-    set(handles.text_profile,'String',num2str(0));
+    set(handles.text_profile,'String','Circle');
     set(handles.text_sp,'String',num2str(0));
     set(handles.text_tr,'String',num2str(0));
     set(handles.text_mpr,'String','Voltage');
@@ -96,48 +114,43 @@ function initialize_gui(hObject, eventdata, handles)
     
     
  
-function update_gui(hObject, eventdata, handles,data)
-
-    data = varargin{1};
-    set(handles.text_eler,'String',data.numel_r);
-    set(handles.text_elec,'String',data.numel_c);
-    set(handles.text_dim,'String',handles.data.dim);
-    set(handles.text_profile,'String',handles.data.profile);
-    set(handles.text_sp,'String',handles.data.r_space);
-    set(handles.text_tr,'String',handles.data.r_time);
-    set(handles.text_phr,'String',handles.data.numph_r);
-    set(handles.text_phc,'String',handles.data.numph_c);
-    set(handles.text_h,'String',handles.data.k);
-    set(handles.text_k,'String',handles.data.h);
-    set(handles.text_ty,'String',handles.data.type_map);
-    set(handles.text_mpr,'String',handles.data.modul_prot);
-    set(handles.text_mph,'String',handles.dati.modul_phos);
+function [data] = update_gui(hObject, eventdata, handles,AllVar)
+    %Set variables with new value
+    data.ele_c = AllVar(1);
+    data.ele_r = AllVar(2);
+    data.r_space = AllVar(3);
+    data.dim = AllVar(4); %um
+    data.r_time = AllVar(5);
+    data.phos_r = AllVar(6);
+    data.phos_c = AllVar(7);
+    data.h = AllVar(8);
+    data.k = AllVar(9);
+    data.mod_phos = AllVar(10);
+    data.type_map = AllVar(11);
+    data.mod_prot = AllVar(12);
+    data.profile =AllVar(13);
+    
+    %Set static text with new value
+    set(handles.text_eler,'String',data.ele_r);
+    set(handles.text_elec,'String',data.ele_c);
+    set(handles.text_dim,'String',data.dim);
+    set(handles.text_profile,'String',data.profile);
+    set(handles.text_sp,'String',data.r_space);
+    set(handles.text_tr,'String',data.r_time);
+    set(handles.text_phr,'String',data.phos_r);
+    set(handles.text_phc,'String',data.phos_c);
+    set(handles.text_h,'String',data.k);
+    set(handles.text_k,'String',data.h);
+    set(handles.text_ty,'String',data.type_map);
+    set(handles.text_mpr,'String',data.mod_prot);
+    set(handles.text_mph,'String',data.mod_phos);
     
     
 % --- Executes on button press in Play.
 function Play_Callback(hObject, eventdata, handles)
-    %
-    % TODO: Get the parameters for the simulation of Phosphenated Vision
-    % At the moment use the following parameters
-    % Data for electrode
-    data.ele_c = 10;
-    data.ele_r = 10;
-    data.dim_elec = 10; %um
-    data.r_space = 0;
-    data.r_time = 0;
-    data.h = 10;
-    data.k = 10;
-    %Data for phosphene
-    data.phos_r = 10;
-    data.phos_c = 10;
-    data.mod_phos = 'amplitude';
-    data.profile ='circle';
-    data.mod_prot = 'voltage';
-    data.type_map = 'uniform';
-
+    
     PathVid = get(handles.text_path,'String');
     NameVid = get(handles.text_namevid,'String');
-
     path_old = cd(PathVid);
         
     if not(exist('vid')) 
@@ -146,7 +159,7 @@ function Play_Callback(hObject, eventdata, handles)
     cd(path_old)
     
     %% Get same input data parameters
-    %nof =                                      %number of frame for the overall video
+    %nof =                                  %number of frame for the overall video
     vidHeight = vid.info.VideoSize(2);      %Height video
     vidWidth = vid.info.VideoSize(1);       %Width video
     vidFrate = vid.info.VideoFrameRate;     %Number of frame for second
@@ -264,18 +277,13 @@ function ConvertImageElectrode(hObject, eventdata, handles)
  % --- Executes on button press in Import.
 function Import_Callback(hObject, eventdata, handles)
  %% Import the file name and path of video
-path_now = cd();
-[FileName,PathName] = uigetfile({'*.avi';'*.mp4'},'Select the VIDEO file',path_now);
-%set StaticText (invisible) with path and name of just selected video 
-set(handles.text_path,'String',PathName);
-set(handles.text_namevid,'String',FileName);
+    path_now = cd();
+    [FileName,PathName] = uigetfile({'*.avi';'*.mp4'},'Select the VIDEO file',path_now);
+    %set StaticText (invisible) with path and name of just selected video 
+    set(handles.text_path,'String',PathName);
+    set(handles.text_namevid,'String',FileName);
 
  
-   
-
-
-
-
 % --- Executes on button press in Next.
 function Next_Callback(hObject, eventdata, handles)
 % hObject    handle to Next (see GCBO)
