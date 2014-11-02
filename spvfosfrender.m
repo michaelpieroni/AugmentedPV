@@ -19,7 +19,7 @@ switch(type_map)
                 frqfilt=frqfilt';
                 m(px-r:px+r,py-c:py+c)=frqfilt;
             end
-    case {'notuniform'}
+    case {'not uniform'}
         [r,c]=size(map);
         [x,y]=find(map);
         m(1:2*r,1:2*c,length(x))=zeros(2*r,2*c);

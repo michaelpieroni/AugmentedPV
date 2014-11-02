@@ -5,7 +5,7 @@ function [ m] = spvmain( im,type_map,ch,h,k,box_margins,rim,cim )
 % per colonna , numero di fosfeni per riga, numero di righe per ogni
 % fosfene e numero di colonne per ogni fosfene
 switch (type_map)
-    case{'uniform'}
+    case{'Uniform'}
          fr = box_margins{1}; %numero righe fosfeni
          fc = box_margins{2}; %numero colonne fosfeni
          r = box_margins{3};  %distanza lungo le righe
@@ -17,7 +17,8 @@ switch (type_map)
          dim_phos{4}=cm;
          [ amp,inte ] = spvfosfprocessor( map,im,ch,type_map,h,k,rim,cim,dim_phos); %richiama la funzione che campionala matrice
          [ m ] = spvfosfrender( map,type_map,inte,amp,r,c ); % richiama la funzione che renderizza l'imagine
-    case{'not uniform'}
+    case{'Not Uniform'}
+         % bisogna apportare delle modifiche
          n=varargin{1}; %numero di fosfeni
          r=varargin{2}; %riche della mappa di fosfeni
          c=varargin{3}; %colonne della mappa di fosfeni

@@ -140,7 +140,7 @@ switch (mp)
         set(handles.pop_mod_phos,'Value',2);
     case {'Intensity'}
         set(handles.pop_mod_phos,'Value',3);
-    case {'Amplitude & Intensity'}
+    case {'& Amplitude-Intensity'}
         set(handles.pop_mod_phos,'Value',4);
 end
 

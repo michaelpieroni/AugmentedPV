@@ -61,22 +61,14 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
-%% Used this metod, but doesn't start the execution.
-% handles.data = varargin{1};
-% if not(exist(a))
-%     initialize_gui(hObject, eventdata, handles)
-% else
-%     update_gui(a)
-% end
-
 
 %% Try another metod
 %%TODO
+
 if exist('data.txt') ~= 2
     initialize_gui(hObject, eventdata, handles)
 else
-    [var_num,var_string,AllVar] = tblread('data.txt',';');
-    [handles.data] = update_gui(hObject, eventdata, handles,AllVar);
+    [hObject, eventdata, handles] = update_gui(hObject, eventdata, handles);
 end
 
 
@@ -114,41 +106,100 @@ function initialize_gui(hObject, eventdata, handles)
     
     
  
-function [data] = update_gui(hObject, eventdata, handles,AllVar)
-    %Set variables with new value
-    data.ele_c = AllVar(1);
-    data.ele_r = AllVar(2);
-    data.r_space = AllVar(3);
-    data.dim = AllVar(4); %um
-    data.r_time = AllVar(5);
-    data.phos_r = AllVar(6);
-    data.phos_c = AllVar(7);
-    data.h = AllVar(8);
-    data.k = AllVar(9);
-    data.mod_phos = AllVar(10);
-    data.type_map = AllVar(11);
-    data.mod_prot = AllVar(12);
-    data.profile =AllVar(13);
+function [hObject, eventdata, handles] = update_gui(hObject, eventdata, handles)
+
+    [var_num,var_string,AllVar] = tblread('data.txt',';');
     
-    %Set static text with new value
-    set(handles.text_eler,'String',data.ele_r);
-    set(handles.text_elec,'String',data.ele_c);
-    set(handles.text_dim,'String',data.dim);
-    set(handles.text_profile,'String',data.profile);
-    set(handles.text_sp,'String',data.r_space);
-    set(handles.text_tr,'String',data.r_time);
-    set(handles.text_phr,'String',data.phos_r);
-    set(handles.text_phc,'String',data.phos_c);
-    set(handles.text_h,'String',data.k);
-    set(handles.text_k,'String',data.h);
-    set(handles.text_ty,'String',data.type_map);
-    set(handles.text_mpr,'String',data.mod_prot);
-    set(handles.text_mph,'String',data.mod_phos);
+    %Set new value of num electrode column 
+    handles.data.ele_c = AllVar(1);
+    set(handles.text_elec,'String',handles.data.ele_c);
+    %Set new value of num electrode row
+    handles.data.ele_r = AllVar(2);
+    set(handles.text_eler,'String',handles.data.ele_r);
+    %Set new value of space response
+    handles.data.r_space = AllVar(3);
+    set(handles.text_sp,'String',handles.data.r_space);
+    %Set new value of dimension electrode
+    handles.data.dim = AllVar(4); %um
+    set(handles.text_dim,'String',handles.data.dim);
+    %Set new value of time response
+    handles.data.r_time = AllVar(5);
+    set(handles.text_tr,'String',handles.data.r_time);
+    %Set new value of num phosphene row
+    handles.data.phos_r = AllVar(6);
+    set(handles.text_phr,'String',handles.data.phos_r);
+    %Set new value of num phosphene column
+    handles.data.phos_c = AllVar(7);
+    set(handles.text_phc,'String',handles.data.phos_c);
+    %Set new value of parameter h
+    handles.data.h = AllVar(8);
+    set(handles.text_h,'String',handles.data.h);
+    %Set new value of parameter k
+    handles.data.k = AllVar(9);
+    set(handles.text_k,'String',handles.data.k);
     
+    %Set new value of modulation prothesis
+    handles.data.mod_prot = AllVar(10);
+    switch handles.data.mod_prot
+        case 'C'
+            handles.data.mod_prot = 'Current';
+        case 'V'
+            handles.data.mod_prot = 'Voltage';
+    end
+    set(handles.text_mpr,'String',handles.data.mod_prot);
+    
+    %Set new value of type map
+    handles.data.type_map = AllVar(11);
+    switch handles.data.type_map
+        case 'U'
+            handles.data.type_map = 'Uniform';
+        case 'N'
+            handles.data.type_map = 'Not Uniform';
+    end
+    set(handles.text_ty,'String',handles.data.type_map);
+    
+    %Set new value of modulation phosphenes
+    handles.data.mod_phos = AllVar(12);
+    switch handles.data.mod_phos
+        case 'I'
+            handles.data.mod_phos = 'Intensity';
+        case 'A'
+            handles.data.mod_phos = 'Amplitude';
+        case '&'
+            handles.data.mod_phos = '& Amplitude-Intensity';
+    end
+    set(handles.text_mph,'String',handles.data.mod_phos);
+    
+    %Set new value of profile electrode
+    handles.data.profile = AllVar(13);
+    switch handles.data.profile
+        case 'C'
+            handles.data.profile = 'Circle';
+        case 'S'
+            handles.data.profile = 'Square';
+    end
+    set(handles.text_profile,'String',handles.data.profile);
+    
+function [data] = Define_variables(hObject, eventdata, handles)
+
+    data.ele_c = str2num(get(handles.text_eler,'String'));
+    data.ele_r = str2num(get(handles.text_elec,'String'));
+    data.phos_r = str2num(get(handles.text_phr,'String'));
+    data.phos_c = str2num(get(handles.text_phc,'String'));
+    data.r_space = str2num(get(handles.text_sp,'String'));
+    data.r_time = str2num(get(handles.text_tr,'String'));
+    data.dim = str2num(get(handles.text_dim,'String'));
+    data.h = str2num(get(handles.text_h,'String'));
+    data.k = str2num(get(handles.text_k,'String'));
+    data.type_map = get(handles.text_ty,'String');
+    data.profile = get(handles.text_profile,'String');
+    data.mod_phos = get(handles.text_mph,'String');
+    data.mod_prot = get(handles.text_mpr,'String');
     
 % --- Executes on button press in Play.
 function Play_Callback(hObject, eventdata, handles)
-    
+
+    [data] = Define_variables(hObject, eventdata, handles);
     PathVid = get(handles.text_path,'String');
     NameVid = get(handles.text_namevid,'String');
     path_old = cd(PathVid);
@@ -186,7 +237,16 @@ function Play_Callback(hObject, eventdata, handles)
     %% Convert video of phosfenes
     
     %% SEE EXAMPLE in http://www.mathworks.com/help/vision/examples/video-display-in-a-custom-user-interface.html
-  
+    
+    
+    %% don't use modulation = Not Uniform
+    %% problema nel passaggio di questi 4 paramentri in quanto la tabella
+    %%preleva dal file solo il primo carattere( cosa analoga a quella che
+    %%avviene per le stringhe, risolta con lo switch)
+    data.ele_c = 16;
+    data.data.ele_r = 16;
+    data.data.phos_r = 16;
+    data.data.phos_c =16;
     
 %     try
             % Check the status of play button

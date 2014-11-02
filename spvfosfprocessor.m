@@ -17,7 +17,7 @@ switch(type_map)
         lr=round(r*rim/rm);
         lc=round(c*cim/cm);
         switch(ch)
-            case('ampiezza')
+            case('Amplitude')
                 for i=1:length(x)
                     xp=round(x(i)*rim/rm);
                     yp=round(y(i)*cim/cm);
@@ -28,7 +28,7 @@ switch(type_map)
                 amplitude=amplitude*d/tmp;
                 varargout{1}=amplitude;
                 varargout{2}=intensity;
-           case('intensità')
+           case('Intensity')
                 for i=1:length(x)
                     xp=round(x(i)*rim/rm);
                     yp=round(y(i)*cim/cm);
@@ -37,7 +37,7 @@ switch(type_map)
                 amplitude=h*ones(length(x),1);
                 varargout{1}=amplitude;
                 varargout{2}=intensity;
-           case('ibrida')
+           case('Amplitude & Intensity')
                 for i=1:length(x)
                     xp=round(x(i)*rim/rm);
                     yp=round(y(i)*cim/cm);
@@ -48,14 +48,14 @@ switch(type_map)
                 varargout{1}=amplitude;
                 varargout{2}=intensity;
         end
-    case('notuniform')
+    case('not uniform')
         dr=varargin{1};
         dc=varargin{2};
         d=varargin{3};
         lr=round((d-1)*rim/rm);
         lc=round((d-1)*cim/cm);
         switch(ch)
-            case('ampiezza')
+            case('Amplitude')
                 for i=1:length(x)
                     xp=round(x(i)*rim/rm);
                     yp=round(y(i)*cim/cm);
@@ -64,7 +64,7 @@ switch(type_map)
                 intensity=k*ones(length(x),1);
                 varargout{1}=amplitude;
                 varargout{2}=intensity;
-           case('intensità')
+           case('Intensity')
                 for i=1:length(x)
                     xp=round(x(i)*rim/rm);
                     yp=round(y(i)*cim/cm);
@@ -73,7 +73,7 @@ switch(type_map)
                 amplitude=h*ones(length(x),1);
                 varargout{1}=amplitude;
                 varargout{2}=intensity;
-           case('ibrida')
+           case('Amplitude & Intensity')
                 for i=1:length(x)
                     xp=round(x(i)*rim/rm);
                     yp=round(y(i)*cim/cm);

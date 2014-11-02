@@ -6,7 +6,7 @@ function [ map,varargout ] = spvfosfmap( type_map,varargin )
 %il numero di righe e di colonne per ogni fosfene rispettivamente r,c. 
 
 switch (type_map)
-    case('uniform')
+    case('Uniform')
         fr=varargin{1}; %numero di fosfeni per riga
         fc=varargin{2}; %numero di fosfeni per colonna
         r=varargin{3};  %nuero di righe
@@ -19,7 +19,7 @@ switch (type_map)
         varargout{2}=c;
         varargout{3}=rm;
         varargout{4}=cm;
-    case ('not uniform')
+    case ('Not Uniform')
         n=varargin{1}; %numero di fosfeni
         r=varargin{2}; %numero di righe della mappa di fosfeni
         c=varargin{3}; %numero di colonne della mappa di fosfeni
