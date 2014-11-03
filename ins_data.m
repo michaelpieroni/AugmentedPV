@@ -210,8 +210,7 @@ function push_insert_Callback(hObject, eventdata, handles)
       close;
       Main();
      
-%      set(handles.Main.uipanel1,'Enable', 'on')
-%      set(handles.Main.Import,'Enable', 'on')
+
     
 function salva(handles)
     %% Save data to file 

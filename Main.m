@@ -203,7 +203,6 @@ function Play_Callback(hObject, eventdata, handles)
     PathVid = get(handles.text_path,'String');
     NameVid = get(handles.text_namevid,'String');
     path_old = cd(PathVid);
-        
     if not(exist('vid')) 
        vid = vision.VideoFileReader(NameVid);
     end
@@ -233,8 +232,6 @@ function Play_Callback(hObject, eventdata, handles)
         
     %% SEE the example at....
     % http://www.mathworks.com/help/vision/ref/vision.videofilereader-class.html
-
-    %% Convert video of phosfenes
     
     %% SEE EXAMPLE in http://www.mathworks.com/help/vision/examples/video-display-in-a-custom-user-interface.html
     
@@ -269,9 +266,8 @@ function Play_Callback(hObject, eventdata, handles)
             % Rotate input video frame and display original and rotated
             % frames on figure
 %             while strcmp(hObject.String, 'Pause') && ~isDone(vid)
-
-            %TODO: verificare la corretta assegnazione di v_height e v_width 
-            while ~isDone(vid)  %|| Stop_KeyPressFcn(hObject, eventdata, handles)
+ 
+            while ~isDone(vid)  || Stop_Callback(hObject, eventdata, handles)
                 % Get input video frame and phosfened frame
                 frame = step(vid); 
                 FrameGray = rgb2gray(frame);
@@ -294,13 +290,11 @@ function Play_Callback(hObject, eventdata, handles)
 %                rethrow(ME);
 %            end
 %        end 
-%     
-%     
     
-    
+
 % --- Executes on button press in Stop.
 function Stop_Callback(hObject, eventdata, handles)
-
+   
 
 % --- Executes on button press in Pause.
 function Pause_Callback(hObject, eventdata, handles)
@@ -331,9 +325,6 @@ function Control_Panel_Callback(hObject, eventdata, handles)
  data = ins_data(handles);
  
 
-function ConvertImageElectrode(hObject, eventdata, handles)
-     
- 
  % --- Executes on button press in Import.
 function Import_Callback(hObject, eventdata, handles)
  %% Import the file name and path of video
@@ -342,7 +333,11 @@ function Import_Callback(hObject, eventdata, handles)
     %set StaticText (invisible) with path and name of just selected video 
     set(handles.text_path,'String',PathName);
     set(handles.text_namevid,'String',FileName);
-
+    set(handles.Stop,'Enable', 'on')
+    set(handles.Play,'Enable', 'on')
+    set(handles.Pause,'Enable', 'on')
+    set(handles.Next,'Enable', 'on')
+    set(handles.x2,'Enable', 'on')
  
 % --- Executes on button press in Next.
 function Next_Callback(hObject, eventdata, handles)

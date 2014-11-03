@@ -12,7 +12,7 @@ amplitude=h*ones(length(x),1); %crea il vettore dell'ampiezza moltiplicato per u
 intensity=k*ones(length(x),1); %crea il vettore dell'intensità moltiplicato per un parametro scelto dall'utente
 tmp=max(std(im));
 switch(type_map)
-    case{'uniform'}
+    case{'Uniform'}
         d=2*min(r,c);
         lr=round(r*rim/rm);
         lc=round(c*cim/cm);
@@ -37,7 +37,7 @@ switch(type_map)
                 amplitude=h*ones(length(x),1);
                 varargout{1}=amplitude;
                 varargout{2}=intensity;
-           case('Amplitude & Intensity')
+           case('& Amplitude-Intensity')
                 for i=1:length(x)
                     xp=round(x(i)*rim/rm);
                     yp=round(y(i)*cim/cm);
@@ -48,7 +48,7 @@ switch(type_map)
                 varargout{1}=amplitude;
                 varargout{2}=intensity;
         end
-    case('not uniform')
+    case('Not Uniform')
         dr=varargin{1};
         dc=varargin{2};
         d=varargin{3};
@@ -73,7 +73,7 @@ switch(type_map)
                 amplitude=h*ones(length(x),1);
                 varargout{1}=amplitude;
                 varargout{2}=intensity;
-           case('Amplitude & Intensity')
+           case('& Amplitude-Intensity')
                 for i=1:length(x)
                     xp=round(x(i)*rim/rm);
                     yp=round(y(i)*cim/cm);

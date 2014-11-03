@@ -6,7 +6,7 @@ function [ m ] = spvfosfrender( map,type_map,intensity,amplitude,varargin )
 [x,y]=find(map);          
 m=zeros(size(map));
 switch(type_map)
-    case{'uniform'}
+    case{'Uniform'}
             r=varargin{1};
             c=varargin{2};
             lx = (-r):(r); 
@@ -19,7 +19,7 @@ switch(type_map)
                 frqfilt=frqfilt';
                 m(px-r:px+r,py-c:py+c)=frqfilt;
             end
-    case {'not uniform'}
+    case {'Not Uniform'}
         [r,c]=size(map);
         [x,y]=find(map);
         m(1:2*r,1:2*c,length(x))=zeros(2*r,2*c);
