@@ -1,9 +1,15 @@
 function [ map,varargout ] = spvfosfmap( type_map,varargin )
+
+%%
+
+
 %r,c dimensione della mappa di fosfeni
 %type_map tipo di mappa ho usato solo 2 casi uniform ovvero fosfeni
 %uniformemente distribuiti in questo caso varargin prende in ingresso fr
 %e fc rispettivamente le righe di fosfeni che voglio e le colonne, e anche
 %il numero di righe e di colonne per ogni fosfene rispettivamente r,c. 
+
+% Salvo Maugeri 2014 @_______
 
 switch (type_map)
     case('Uniform')
