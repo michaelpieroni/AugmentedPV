@@ -208,7 +208,7 @@ function push_insert_Callback(hObject, eventdata, handles)
       guidata(hObject,handles.data)
       salva(handles);
       close;
-      Main();
+%       Main();
      
 
     

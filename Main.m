@@ -204,7 +204,7 @@ function Play_Callback(hObject, eventdata, handles)
     NameVid = get(handles.text_namevid,'String');
     path_old = cd(PathVid);
     if not(exist('vid')) 
-       vid = vision.VideoFileReader(NameVid);
+       vid = vision.VideoFileReader(NameVid,'ImageColorSpace','Intensity', 'VideoOutputDataType', 'double' );
     end
     cd(path_old)
     
@@ -221,7 +221,10 @@ function Play_Callback(hObject, eventdata, handles)
     r = data.phos_r;
     pixph_r = ceil(vidHeight/r);
     
-    
+    data.ele_c = 16;
+    data.data.ele_r = 16;
+    data.data.phos_r = 16;
+    data.data.phos_c =16;
     %% Insert the variables in the box to pass in the funtion
     box_margin{1} = data.ele_c;
     box_margin{2} = data.ele_r;  
@@ -240,10 +243,7 @@ function Play_Callback(hObject, eventdata, handles)
     %% problema nel passaggio di questi 4 paramentri in quanto la tabella
     %%preleva dal file solo il primo carattere( cosa analoga a quella che
     %%avviene per le stringhe, risolta con lo switch)
-    data.ele_c = 16;
-    data.data.ele_r = 16;
-    data.data.phos_r = 16;
-    data.data.phos_c =16;
+    
     
 %     try
             % Check the status of play button
@@ -266,15 +266,24 @@ function Play_Callback(hObject, eventdata, handles)
             % Rotate input video frame and display original and rotated
             % frames on figure
 %             while strcmp(hObject.String, 'Pause') && ~isDone(vid)
+
+                videoPlayerLEFT=vision.VideoPlayer;
+                
+                videoPlayerRIGHT=vision.VideoPlayer;
  
             while ~isDone(vid)  || Stop_Callback(hObject, eventdata, handles)
                 % Get input video frame and phosfened frame
                 frame = step(vid); 
-                FrameGray = rgb2gray(frame);
-                [FrameModified]=spvmain(FrameGray,data.type_map,data.mod_prot,data.h,data.k,box_margin,vidHeight,vidWidth);
- 
+%                 FrameGray = rgb2gray(frame);
+                FrameGray = frame;
+%                 step(videoPlayer,frame)
                 % Display input video frame on axis
-                showFrameOnAxis(handles.axisReal, frame);
+%                 showFrameOnAxis(handles.axisReal, frame);
+                step(videoPlayerLEFT,frame)
+                
+                [FrameModified]=spvmain(FrameGray,data.type_map,data.mod_prot,data.h,data.k,box_margin,vidHeight,vidWidth);
+                step(videoPlayerRIGHT,FrameModified)
+                
                 % Display Phosfened video from on axis
                 showFrameOnAxis(handles.axisPhosfened, FrameModified);
             end
