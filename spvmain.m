@@ -11,11 +11,14 @@ switch (type_map)
          r = box_margins{3};  %distanza lungo le righe
          c = box_margins{4};  %distanza lungo le colonne
          [ map,r,c,rm,cm ] = spvfosfmap( type_map,fr,fc,r,c );  %richiama la mappa i fosfeni
-         dim_phos{1}=r;
-         dim_phos{2}=c;
+         dim_phos{1}=fr;
+         dim_phos{2}=fc;
          dim_phos{3}=rm;
          dim_phos{4}=cm;
-         [ amp,inte ] = spvfosfprocessor( map,im,ch,type_map,h,k,rim,cim,dim_phos); %richiama la funzione che campionala matrice
+%          [ amp,inte ] = spvfosfprocessor( map,im,ch,type_map,h,k,rim,cim,dim_phos); %richiama la funzione che campionala matrice
+         [ amp,inte ] = spvfosfprocessor2( im,ch,type_map,h,k,dim_phos); %richiama la funzione che campionala matrice
+        
+
          [ m ] = spvfosfrender( map,type_map,inte,amp,r,c ); % richiama la funzione che renderizza l'imagine
     case{'Not Uniform'}
          % bisogna apportare delle modifiche
