@@ -202,9 +202,21 @@ function [data] = Define_variables(hObject, eventdata, handles)
     
 % --- Executes on button press in Play.
 function Play_Callback(hObject, eventdata, handles)
+<<<<<<< HEAD
 
     
+=======
+	
+>>>>>>> origin/master
     [data] = Define_variables(hObject, eventdata, handles);
+    
+    
+    %Initialize relevant values
+    data.ele_c = 10;
+    data.ele_r = 10;
+    data.phos_r = data.ele_c ;
+    data.phos_c =data.ele_r;
+    
     PathVid = get(handles.text_path,'String');
     NameVid = get(handles.text_namevid,'String');
     path_old = cd(PathVid);
@@ -221,15 +233,21 @@ function Play_Callback(hObject, eventdata, handles)
     vidFormat = vid.info.VideoFormat;       %Format of Video 
     
     %% Calculating the number of pixel for each phosfene
-    c = data.phos_c;
-    pixph_c = ceil(vidWidth/c);
-    r = data.phos_r;
-    pixph_r = ceil(vidHeight/r);
+%     c = data.phos_c;
+%     pixph_c = ceil(vidWidth/c);
+%     r = data.phos_r;
+%     pixph_r = ceil(vidHeight/r);
+    pixph_c = ceil(vidWidth/data.phos_c)+1;
     
+    pixph_r = ceil(vidHeight/data.phos_r)+1;
+    
+<<<<<<< HEAD
     data.ele_c = 10;
     data.ele_r = 10;
     data.phos_r = 10;
     data.phos_c =10;
+=======
+>>>>>>> origin/master
     %% Insert the variables in the box to pass in the funtion
     box_margin{1} = data.ele_c;
     box_margin{2} = data.ele_r;  
@@ -284,7 +302,13 @@ function Play_Callback(hObject, eventdata, handles)
 %                 showFrameOnAxis(handles.axisReal, frame);
                
                 
+<<<<<<< HEAD
                 [FrameModified]=spvmain(frame,data.type_map,data.mod_phos,data.h,data.k,box_margin,vidHeight,vidWidth);
+=======
+%                 [FrameModified]=spvmain(FrameGray,data.type_map,data.mod_prot,data.h,data.k,box_margin,vidHeight,vidWidth);
+                [FrameModified]=spvmain(FrameGray,data.type_map,data.mod_phos,data.h,data.k,box_margin,vidHeight,vidWidth);
+                
+>>>>>>> origin/master
                 step(videoPlayerRIGHT,FrameModified)
                 
                 % Display Phosfened video from on axis
