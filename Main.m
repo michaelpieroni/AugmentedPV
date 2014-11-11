@@ -90,19 +90,23 @@ varargout{1} = handles.output;
 
 function initialize_gui(hObject, eventdata, handles)
 %%  Inizialize the variables and set the text to zero
-    set(handles.text_eler,'String',num2str(0));
-    set(handles.text_elec,'String',num2str(0));
-    set(handles.text_dim,'String',num2str(0));
+    global ele_r ele_c dim ty profile sp tr mpr mph
+    
+    set(handles.text_eler,'String',num2str(10));
+    ele_r = 10;
+    set(handles.text_elec,'String',num2str(10));
+    set(handles.text_dim,'String',num2str(110));
     set(handles.text_profile,'String','Circle');
-    set(handles.text_sp,'String',num2str(0));
-    set(handles.text_tr,'String',num2str(0));
+    set(handles.text_sp,'String',num2str(10));
+    set(handles.text_tr,'String',num2str(10));
     set(handles.text_mpr,'String','Voltage');
     set(handles.text_mph,'String','Amplitude');
     set(handles.text_ty,'String','Uniform');
-    set(handles.text_phr,'String',num2str(0));
-    set(handles.text_phc,'String',num2str(0));
-    set(handles.text_h,'String',num2str(0));
-    set(handles.text_k,'String',num2str(0));
+    set(handles.text_phr,'String',num2str(10));
+    set(handles.text_phc,'String',num2str(10));
+    set(handles.text_h,'String',num2str(10));
+    set(handles.text_k,'String',num2str(10));
+    
     
     
  
@@ -199,6 +203,7 @@ function [data] = Define_variables(hObject, eventdata, handles)
 % --- Executes on button press in Play.
 function Play_Callback(hObject, eventdata, handles)
 
+    
     [data] = Define_variables(hObject, eventdata, handles);
     PathVid = get(handles.text_path,'String');
     NameVid = get(handles.text_namevid,'String');
@@ -221,10 +226,10 @@ function Play_Callback(hObject, eventdata, handles)
     r = data.phos_r;
     pixph_r = ceil(vidHeight/r);
     
-    data.ele_c = 16;
-    data.data.ele_r = 16;
-    data.data.phos_r = 16;
-    data.data.phos_c =16;
+    data.ele_c = 10;
+    data.ele_r = 10;
+    data.phos_r = 10;
+    data.phos_c =10;
     %% Insert the variables in the box to pass in the funtion
     box_margin{1} = data.ele_c;
     box_margin{2} = data.ele_r;  
@@ -268,24 +273,22 @@ function Play_Callback(hObject, eventdata, handles)
 %             while strcmp(hObject.String, 'Pause') && ~isDone(vid)
 
                 videoPlayerLEFT=vision.VideoPlayer;
-                
                 videoPlayerRIGHT=vision.VideoPlayer;
- 
+  
             while ~isDone(vid)  || Stop_Callback(hObject, eventdata, handles)
-                % Get input video frame and phosfened frame
+                
                 frame = step(vid); 
-%                 FrameGray = rgb2gray(frame);
-                FrameGray = frame;
-%                 step(videoPlayer,frame)
+                axes(handles.axisReal);
+                step(videoPlayerLEFT,frame)
                 % Display input video frame on axis
 %                 showFrameOnAxis(handles.axisReal, frame);
-                step(videoPlayerLEFT,frame)
+               
                 
-                [FrameModified]=spvmain(FrameGray,data.type_map,data.mod_prot,data.h,data.k,box_margin,vidHeight,vidWidth);
+                [FrameModified]=spvmain(frame,data.type_map,data.mod_phos,data.h,data.k,box_margin,vidHeight,vidWidth);
                 step(videoPlayerRIGHT,FrameModified)
                 
                 % Display Phosfened video from on axis
-                showFrameOnAxis(handles.axisPhosfened, FrameModified);
+                %showFrameOnAxis(handles.axisPhosfened, FrameModified);
             end
 
             % When video reaches the end of file, display "Start" on the
