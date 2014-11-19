@@ -22,7 +22,7 @@ cmp=dim_phos{4};
 
 if nargin>6 %% TO BE CHECKED 
     %ZOOM : da IMPLEMENTARE
-    error ('Zoom into the image is not already implemented!!! DOTO ')
+    error ('Zoom into the image is not already implemented!!! TODO ')
 else
     imROI=im; 
 end
@@ -32,6 +32,7 @@ switch(type_map)
     case{'Uniform'}
         r_imP=size(imROI,1); % num row in the image ROI(region of interest)
         c_imP=size(imROI,2); % num row in the image ROI(region of interest)
+        
         % For row
         D_r=r_imP/r_mp;
         sD_r=D_r/2;
@@ -42,7 +43,7 @@ switch(type_map)
         sD_c=D_c/2;
         coord_c=sD_c:D_c:c_imP;
         
-%         imA=imPort(vett_r,vett_c);
+%        imA=imPort(vett_r,vett_c);
         %CHECK about phosphene coordinate dimension
         if not(length(coord_c)==length(coord_r))
             error('phosphene coordinate do not match in row and column')
@@ -51,55 +52,55 @@ switch(type_map)
         %Mapping of the phosphenes in the image/ROI 
         vett_r=linspace(0,r_imP,r_mp+1); % vector for row
         vett_c=linspace(0,c_imP,c_mp+1); % vector for column
-        
-            
       
         switch(ch)
             case('Amplitude')
-                
                 for np_c=2:length(vett_c)
                     for np_r=2:length(vett_r)
-%                         if np_c==1
-%                             ind_c=1;
-%                         else
-                            ind_c=vett_c(np_c-1)+1:vett_c(np_c);
-%                         end
-%                         if np_r==1
-%                             ind_r=1;
-%                         else
-                            ind_r=vett_r(np_r-1)+1:vett_r(np_r);
-%                         end
+                        ind_c=vett_c(np_c-1)+1:vett_c(np_c);
+                        ind_r=vett_r(np_r-1)+1:vett_r(np_r);
                         imWind=imROI(floor(ind_r),floor(ind_c));
                         amplitude(np_r-1,np_c-1)=std(std(imWind));
                     end                     
                 end
                 %then intensity to ones
                 intensity=ones(length(coord_r),length(coord_c));
-                
-                warning ('Check window dimension!! amplitude not  consistent!!!')
-                
+%                warning ('Check window dimension!! amplitude not  consistent!!!')
+                varargout{1}=amplitude;
+                varargout{2}=intensity;
 
-                
            case('Intensity')
-%                 for i=1:length(x)
-%                     xp=round(x(i)*rim/rmp);
-%                     yp=round(y(i)*cim/cmp);
-%                     intensity(i)=mean(mean(im(xp-lr:xp+lr,yp-lc:yp+lc)));
-%                 end
-%                 amplitude=h*ones(length(x),1);
-%                 varargout{1}=amplitude;
-%                 varargout{2}=intensity;
+                for np_c=2:length(vett_c)
+                    for np_r=2:length(vett_r)
+                        ind_c=vett_c(np_c-1)+1:vett_c(np_c);
+                        ind_r=vett_r(np_r-1)+1:vett_r(np_r);
+                        imWind=imROI(floor(ind_r),floor(ind_c));
+                        intensity(np_r-1,np_c-1)=mean(mean(imWind));
+                    end                     
+                end
+                %then intensity to ones
+                amplitude=ones(length(coord_r),length(coord_c));
+                warning ('Check window dimension!! intensity not  consistent!!!')
+                varargout{1}=amplitude;
+                varargout{2}=intensity;
+
            case('& Amplitude-Intensity')
-%                 for i=1:length(x)
-%                     xp=round(x(i)*rim/rmp);
-%                     yp=round(y(i)*cim/cmp);
-%                     amplitude(i)=std(std(im(xp-lr:xp+lr,yp-lc:yp+lc)));
-%                     intensity(i)=mean(mean(im(xp-lr:xp+lr,yp-lc:yp+lc)));
-%                 end
-%                 amplitude=amplitude*d/tmp;
-%                 varargout{1}=amplitude;
-%                 varargout{2}=intensity;
+                for np_c=2:length(vett_c)
+                    for np_r=2 : length(vett_r)
+                        ind_c = vett_c(np_c-1)+1:vett_c(np_c);
+                        ind_r = vett_r(np_r-1)+1:vett_r(np_r);
+                        imWind = imROI(floor(ind_r),floor(ind_c));
+                        amplitude(np_r-1,np_c-1) = std(std(imWind));
+                        intensity(np_r-1,np_c-1) = mean(mean(imWind));
+                    end                     
+                end
+                %then intensity to ones
+%                 intensity=ones(length(coord_r),length(coord_c));
+%                 warning ('Check window dimension!! amplitude not  consistent!!!')
+                varargout{1}=amplitude;
+                varargout{2}=intensity;
         end
+        
     case('Not Uniform')
         error ('Not uniform is not already implemented')
         

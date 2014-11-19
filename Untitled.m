@@ -1,1 +1,0 @@
-obj = videoreader( 'videoprova.avi' ); 

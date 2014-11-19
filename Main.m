@@ -43,7 +43,6 @@ else
 end
 
 % Initialize Experimental Condition
-
 % End initialization code - DO NOT EDIT
 
 
@@ -58,17 +57,17 @@ function Main_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for Main
 handles.output = hObject;
 
-% Update handles structure
+%% Verify first access and Update handles structure
 guidata(hObject, handles);
+varControl = get(handles.t_control_in, 'String');
 
-
-%% Try another metod
-%%TODO
-
-if exist('data.txt') ~= 2
-    initialize_gui(hObject, eventdata, handles)
+if strcmp(varControl,'no') ~= 0
+    initialize_gui(hObject, eventdata, handles);
 else
-    [hObject, eventdata, handles] = update_gui(hObject, eventdata, handles);
+    %retrives the global variable saved in ins_data 
+    GlobDat = getappdata(0,'varGlobal');  
+    [hObject, eventdata, handles] = update_gui(hObject, eventdata, handles,GlobDat);
+    rmappdata(0,'varGlobal');
 end
 
 
@@ -89,139 +88,112 @@ varargout{1} = handles.output;
 % pixel e mm
 
 function initialize_gui(hObject, eventdata, handles)
-%%  Inizialize the variables and set the text to zero
-    global ele_r ele_c dim ty profile sp tr mpr mph
+%%  Inizialize the variables and set the text to defaul value
     
     set(handles.text_eler,'String',num2str(10));
-    ele_r = 10;
-    set(handles.text_elec,'String',num2str(10));
-    set(handles.text_dim,'String',num2str(110));
-    set(handles.text_profile,'String','Circle');
-    set(handles.text_sp,'String',num2str(10));
-    set(handles.text_tr,'String',num2str(10));
-    set(handles.text_mpr,'String','Voltage');
-    set(handles.text_mph,'String','Amplitude');
-    set(handles.text_ty,'String','Uniform');
-    set(handles.text_phr,'String',num2str(10));
-    set(handles.text_phc,'String',num2str(10));
-    set(handles.text_h,'String',num2str(10));
-    set(handles.text_k,'String',num2str(10));
+    handles.data.ele_r = 10;
     
+    set(handles.text_elec,'String',num2str(10));
+    handles.data.ele_c = 10;
+    
+    set(handles.text_phr,'String',handles.data.ele_r);
+    handles.data.phos_r = handles.data.ele_r;
+    
+    set(handles.text_phc,'String',handles.data.ele_c);
+    handles.data.phos_c = handles.data.ele_c;
+    
+    set(handles.text_dim,'String',num2str(10));
+    handles.data.dim = 10;
+    
+    set(handles.text_profile,'String','Circle');
+    handles.data.profile = 'Circle';
+    
+    set(handles.text_sp,'String',num2str(10));
+    handles.data.r_space = 10;
+    
+    set(handles.text_tr,'String',num2str(10));
+    handles.data.r_time = 10;
+    
+    set(handles.text_mpr,'String','Voltage');
+    handles.data.mod_prot = 'Voltage';
+    
+    set(handles.text_mph,'String','Amplitude');
+    handles.data.mod_phos = 'Amplitude';
+    
+    set(handles.text_ty,'String','Uniform');
+    handles.data.type_map = 'Uniform';
+    
+    set(handles.text_h,'String',num2str(1));
+    handles.data.h = 1;
+    
+    set(handles.text_k,'String',num2str(1));
+    handles.data.k = 1;
+    
+    guidata(hObject,handles);
     
     
  
-function [hObject, eventdata, handles] = update_gui(hObject, eventdata, handles)
+function [hObject, eventdata, handles] = update_gui(hObject, eventdata, handles,NewData)
 
-    [var_num,var_string,AllVar] = tblread('data.txt',';');
-    
     %Set new value of num electrode column 
-    handles.data.ele_c = AllVar(1);
-    set(handles.text_elec,'String',handles.data.ele_c);
-    %Set new value of num electrode row
-    handles.data.ele_r = AllVar(2);
-    set(handles.text_eler,'String',handles.data.ele_r);
-    %Set new value of space response
-    handles.data.r_space = AllVar(3);
-    set(handles.text_sp,'String',handles.data.r_space);
-    %Set new value of dimension electrode
-    handles.data.dim = AllVar(4); %um
-    set(handles.text_dim,'String',handles.data.dim);
-    %Set new value of time response
-    handles.data.r_time = AllVar(5);
-    set(handles.text_tr,'String',handles.data.r_time);
-    %Set new value of num phosphene row
-    handles.data.phos_r = AllVar(6);
-    set(handles.text_phr,'String',handles.data.phos_r);
-    %Set new value of num phosphene column
-    handles.data.phos_c = AllVar(7);
+    handles.data.ele_c = NewData.ele_c;
+    handles.data.phos_c = handles.data.ele_c;
     set(handles.text_phc,'String',handles.data.phos_c);
+    set(handles.text_elec,'String',handles.data.ele_c);
+    
+    
+    %Set new value of num electrode row
+    handles.data.ele_r = NewData.ele_r;
+    handles.data.phos_r = handles.data.ele_r;
+    set(handles.text_phr,'String',handles.data.phos_r);
+    set(handles.text_eler,'String',handles.data.ele_r);
+    
+    %Set new value of space response
+    handles.data.r_space = NewData.r_space;
+    set(handles.text_sp,'String',handles.data.r_space);
+    
+    %Set new value of dimension electrode
+    handles.data.dim = NewData.dim; %um
+    set(handles.text_dim,'String',handles.data.dim);
+    
+    %Set new value of time response
+    handles.data.r_time = NewData.r_time;
+    set(handles.text_tr,'String',handles.data.r_time);
+    
     %Set new value of parameter h
-    handles.data.h = AllVar(8);
+    handles.data.h = NewData.h;
     set(handles.text_h,'String',handles.data.h);
+    
     %Set new value of parameter k
-    handles.data.k = AllVar(9);
+    handles.data.k = NewData.k;
     set(handles.text_k,'String',handles.data.k);
     
     %Set new value of modulation prothesis
-    handles.data.mod_prot = AllVar(10);
-    switch handles.data.mod_prot
-        case 'C'
-            handles.data.mod_prot = 'Current';
-        case 'V'
-            handles.data.mod_prot = 'Voltage';
-    end
+    handles.data.mod_prot = NewData.mod_prot;
     set(handles.text_mpr,'String',handles.data.mod_prot);
     
     %Set new value of type map
-    handles.data.type_map = AllVar(11);
-    switch handles.data.type_map
-        case 'U'
-            handles.data.type_map = 'Uniform';
-        case 'N'
-            handles.data.type_map = 'Not Uniform';
-    end
+    handles.data.type_map = NewData.type_map;
     set(handles.text_ty,'String',handles.data.type_map);
     
     %Set new value of modulation phosphenes
-    handles.data.mod_phos = AllVar(12);
-    switch handles.data.mod_phos
-        case 'I'
-            handles.data.mod_phos = 'Intensity';
-        case 'A'
-            handles.data.mod_phos = 'Amplitude';
-        case '&'
-            handles.data.mod_phos = '& Amplitude-Intensity';
-    end
+    handles.data.mod_phos = NewData.mod_phos;
     set(handles.text_mph,'String',handles.data.mod_phos);
     
     %Set new value of profile electrode
-    handles.data.profile = AllVar(13);
-    switch handles.data.profile
-        case 'C'
-            handles.data.profile = 'Circle';
-        case 'S'
-            handles.data.profile = 'Square';
-    end
+    handles.data.profile = NewData.profile;
     set(handles.text_profile,'String',handles.data.profile);
     
-function [data] = Define_variables(hObject, eventdata, handles)
-
-    data.ele_c = str2num(get(handles.text_eler,'String'));
-    data.ele_r = str2num(get(handles.text_elec,'String'));
-    data.phos_r = str2num(get(handles.text_phr,'String'));
-    data.phos_c = str2num(get(handles.text_phc,'String'));
-    data.r_space = str2num(get(handles.text_sp,'String'));
-    data.r_time = str2num(get(handles.text_tr,'String'));
-    data.dim = str2num(get(handles.text_dim,'String'));
-    data.h = str2num(get(handles.text_h,'String'));
-    data.k = str2num(get(handles.text_k,'String'));
-    data.type_map = get(handles.text_ty,'String');
-    data.profile = get(handles.text_profile,'String');
-    data.mod_phos = get(handles.text_mph,'String');
-    data.mod_prot = get(handles.text_mpr,'String');
+    guidata(hObject,handles); %% Save the modifications 
+    
+    
     
 % --- Executes on button press in Play.
 function Play_Callback(hObject, eventdata, handles)
-<<<<<<< HEAD
 
-    
-=======
-	
->>>>>>> origin/master
-    [data] = Define_variables(hObject, eventdata, handles);
-    
-    
-    %Initialize relevant values
-    data.ele_c = 10;
-    data.ele_r = 10;
-    data.phos_r = data.ele_c ;
-    data.phos_c =data.ele_r;
-    
-    PathVid = get(handles.text_path,'String');
-    NameVid = get(handles.text_namevid,'String');
-    path_old = cd(PathVid);
+    path_old = cd(handles.PathName);
     if not(exist('vid')) 
-       vid = vision.VideoFileReader(NameVid,'ImageColorSpace','Intensity', 'VideoOutputDataType', 'double' );
+       vid = vision.VideoFileReader(handles.FileName,'ImageColorSpace','Intensity', 'VideoOutputDataType', 'double' );
     end
     cd(path_old)
     
@@ -233,41 +205,20 @@ function Play_Callback(hObject, eventdata, handles)
     vidFormat = vid.info.VideoFormat;       %Format of Video 
     
     %% Calculating the number of pixel for each phosfene
-%     c = data.phos_c;
-%     pixph_c = ceil(vidWidth/c);
-%     r = data.phos_r;
-%     pixph_r = ceil(vidHeight/r);
-    pixph_c = ceil(vidWidth/data.phos_c)+1;
+    pixph_c = ceil(vidWidth/handles.data.phos_c)+1;  
+    pixph_r = ceil(vidHeight/handles.data.phos_r)+1;
     
-    pixph_r = ceil(vidHeight/data.phos_r)+1;
-    
-<<<<<<< HEAD
-    data.ele_c = 10;
-    data.ele_r = 10;
-    data.phos_r = 10;
-    data.phos_c =10;
-=======
->>>>>>> origin/master
     %% Insert the variables in the box to pass in the funtion
-    box_margin{1} = data.ele_c;
-    box_margin{2} = data.ele_r;  
+    box_margin{1} = handles.data.ele_c;
+    box_margin{2} = handles.data.ele_r;  
     box_margin{3} = pixph_r;
     box_margin{4} = pixph_c;
-    
-    %% Convert VideoFormat to GrayScale
-        
-    %% SEE the example at....
-    % http://www.mathworks.com/help/vision/ref/vision.videofilereader-class.html
-    
-    %% SEE EXAMPLE in http://www.mathworks.com/help/vision/examples/video-display-in-a-custom-user-interface.html
-    
-    
+ 
     %% don't use modulation = Not Uniform
-    %% problema nel passaggio di questi 4 paramentri in quanto la tabella
-    %%preleva dal file solo il primo carattere( cosa analoga a quella che
-    %%avviene per le stringhe, risolta con lo switch)
-    
-    
+   
+%% http://it.mathworks.com/help/vision/functionlist.html
+% da consultare per tutte le funzionalità della computer vision di Matlab
+%%    
 %     try
             % Check the status of play button
 %             isTextStart = strcmp(hObject.String,'Play');
@@ -290,29 +241,32 @@ function Play_Callback(hObject, eventdata, handles)
             % frames on figure
 %             while strcmp(hObject.String, 'Pause') && ~isDone(vid)
 
-                videoPlayerLEFT=vision.VideoPlayer;
-                videoPlayerRIGHT=vision.VideoPlayer;
-  
-            while ~isDone(vid)  || Stop_Callback(hObject, eventdata, handles)
+%                 videoPlayerLEFT = vision.VideoPlayer;
+%                 videoPlayerRIGHT = vision.VideoPlayer;
                 
-                frame = step(vid); 
-                axes(handles.axisReal);
-                step(videoPlayerLEFT,frame)
-                % Display input video frame on axis
-%                 showFrameOnAxis(handles.axisReal, frame);
+            viewReal = vision.DeployableVideoPlayer;
+            viewPhosf = vision.DeployableVideoPlayer;
+
+            while ~isDone(vid)  
+               frame = step(vid); 
+               step(viewReal,frame)
                
+%                 step(videoPlayerLEFT,frame)
+%                 Display input video frame on axis
+%                 showFrameOnAxis(handles.axisReal, frame);
+%               
+
+                [FrameModified] = spvmain(frame,handles.data.type_map,...
+                                  handles.data.mod_phos,handles.data.h,...
+                                  handles.data.k,box_margin,vidHeight,vidWidth);
                 
-<<<<<<< HEAD
-                [FrameModified]=spvmain(frame,data.type_map,data.mod_phos,data.h,data.k,box_margin,vidHeight,vidWidth);
-=======
-%                 [FrameModified]=spvmain(FrameGray,data.type_map,data.mod_prot,data.h,data.k,box_margin,vidHeight,vidWidth);
-                [FrameModified]=spvmain(FrameGray,data.type_map,data.mod_phos,data.h,data.k,box_margin,vidHeight,vidWidth);
-                
->>>>>>> origin/master
-                step(videoPlayerRIGHT,FrameModified)
-                
-                % Display Phosfened video from on axis
-                %showFrameOnAxis(handles.axisPhosfened, FrameModified);
+%                  step(videoPlayerRIGHT,FrameModified)
+
+                 step(viewPhosf,FrameModified)
+
+%                 Display Phosfened video from on axis
+%                 showFrameOnAxis(handles.axisPhosfened, FrameModified);
+
             end
 
             % When video reaches the end of file, display "Start" on the
@@ -326,7 +280,7 @@ function Play_Callback(hObject, eventdata, handles)
 %                rethrow(ME);
 %            end
 %        end 
-    
+
 
 % --- Executes on button press in Stop.
 function Stop_Callback(hObject, eventdata, handles)
@@ -355,25 +309,31 @@ function Sel_ImVid_Callback(hObject, eventdata, handles)
 % --------------------------------------------------------------------
 function Exit_Callback(hObject, eventdata, handles)
 
-
 % --------------------------------------------------------------------
 function Control_Panel_Callback(hObject, eventdata, handles)
- data = ins_data(handles);
+    %set StaticText (invisible) to control the first access 
+    set(handles.t_control_in,'String', 'si');
+    data = ins_data(handles);
+
+    %guidata(hObject,handles);
+
  
 
  % --- Executes on button press in Import.
 function Import_Callback(hObject, eventdata, handles)
  %% Import the file name and path of video
+ 
     path_now = cd();
-    [FileName,PathName] = uigetfile({'*.avi';'*.mp4'},'Select the VIDEO file',path_now);
-    %set StaticText (invisible) with path and name of just selected video 
-    set(handles.text_path,'String',PathName);
-    set(handles.text_namevid,'String',FileName);
+    [FileName,PathName] = uigetfile({'*.avi';'*.mp4'},'Select the VIDEO file',path_now); 
+    handles.FileName = FileName;
+    handles.PathName = PathName;
     set(handles.Stop,'Enable', 'on')
     set(handles.Play,'Enable', 'on')
     set(handles.Pause,'Enable', 'on')
     set(handles.Next,'Enable', 'on')
     set(handles.x2,'Enable', 'on')
+    
+    guidata(hObject,handles);       %% Save the modifications
  
 % --- Executes on button press in Next.
 function Next_Callback(hObject, eventdata, handles)

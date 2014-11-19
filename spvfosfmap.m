@@ -1,8 +1,5 @@
 function [ map,varargout ] = spvfosfmap( type_map,varargin )
 
-%%
-
-
 %r,c dimensione della mappa di fosfeni
 %type_map tipo di mappa ho usato solo 2 casi uniform ovvero fosfeni
 %uniformemente distribuiti in questo caso varargin prende in ingresso fr
@@ -17,23 +14,25 @@ switch (type_map)
         fc=varargin{2}; %numero di fosfeni per colonna
         r=varargin{3};  %nuero di righe per fosfene
         c=varargin{4};  %numero di colonne per fosfene
-%         rm=fr*(2*r+1);  %mi calcolo il numero di righe della mappa di fosfeni
-%         cm=fc*(2*c+1);  %mi calcolo il numero di colonne della mappa di fosfeni
-        rm=fr*(r);  %mi calcolo il numero di righe della mappa di fosfeni
-        cm=fc*(c);  %mi calcolo il numero di colonne della mappa di fosfeni
+
+        rmap=fr*(r);  %mi calcolo il numero di righe della mappa di fosfeni
+        cmap=fc*(c);  %mi calcolo il numero di colonne della mappa di fosfeni
+           
+        map=sparse(rmap,cmap);  %creo la mappa di fosfeni come matrice sparsa
+%         vett_r=(r+1:2*r+1:rmap-r);
+%         vett_c=(c+1:2*c+1:cmap-c);
+
+        %% modifica della mappa dato che con il modello di Salvo venivano 
+        %  considerati solo 4x4 fosfeni. Questa è la mia interpretazione
         
-%         rm=fr*r;  %mi calcolo il numero di righe della mappa di fosfeni
-%         cm=fc*c;  %mi calcolo il numero di colonne della mappa di fosfeni
-        
-        
-        map=sparse(rm,cm);  %creo la mappa di fosfeni come matrice sparsa
-        vett_r=(r+1:2*r+1:rm-r);
-        vett_c=(c+1:2*c+1:cm-c);
-        map(vett_r,vett_c)=1; %metto 1 in corrispondenza dell fosfene
+        vett_r = ((r-1)/2 : r : rmap-(r-1)/2);
+        vett_c = ((c-1)/2 : c : cmap-(c-1)/2);
+        %
+        map(vett_r,vett_c)=1; %metto 1 in corrispondenza del fosfene
         varargout{1}=r; 
         varargout{2}=c;
-        varargout{3}=rm;
-        varargout{4}=cm;
+        varargout{3}=rmap;
+        varargout{4}=cmap;
     case ('Not Uniform')
         n=varargin{1}; %numero di fosfeni
         r=varargin{2}; %numero di righe della mappa di fosfeni

@@ -15,9 +15,19 @@ switch(type_map)
             for i=1:length(x)
                 px=x(i);
                 py=y(i);
-                arg=((lX.^2+lY.^2)./(amplitude(i).^2)); frqfilt=intensity(i).*exp(-arg);  
+                arg=((lX.^2+lY.^2)./(amplitude(i).^2)); 
+                frqfilt=intensity(i).*exp(-arg);  
                 frqfilt=frqfilt';
-                m(px-r:px+r,py-c:py+c)=frqfilt;
+                
+                %% errore in questo passaggio che non capisco molto oppure in spvfosfmap
+                %m(px-r:px+r,py-c:py+c)=frqfilt;
+                % righe sotto bo
+%                  if i==1
+                     mapr = (px-(r-1)/2)+1 : (px+(r-1)/2)+1;
+                     mapc = (py-(c-1)/2)+1 : (py+(c-1)/2)+1;
+%                 mapr = px-(r-1)/2 : px+(r-1)/2;
+%                 mapc = py-(c-1)/2 : py+(c-1)/2;
+                m(mapr,mapc)=frqfilt;
             end
     case {'Not Uniform'}
         [r,c]=size(map);
