@@ -22,7 +22,7 @@ function varargout = Main(varargin)
 
 % Edit the above text to modify the response to help Main
 
-% Last Modified by GUIDE v2.5 22-Oct-2014 16:34:42
+% Last Modified by GUIDE v2.5 21-Nov-2014 16:00:08
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -191,11 +191,11 @@ function [hObject, eventdata, handles] = update_gui(hObject, eventdata, handles,
 % --- Executes on button press in Play.
 function Play_Callback(hObject, eventdata, handles)
 
-    path_old = cd(handles.PathName);
+    path_old = cd(handles.PathNameVid);
     if not(exist('vid')) 
-       vid = vision.VideoFileReader(handles.FileName,'ImageColorSpace','Intensity', 'VideoOutputDataType', 'double' );
+       vid = vision.VideoFileReader(handles.FileNameVid,'ImageColorSpace','Intensity', 'VideoOutputDataType', 'double' );
     end
-    cd(path_old)
+    cd(path_old);
     
     %% Get same input data parameters
     %nof =                                  %number of frame for the overall video
@@ -208,7 +208,7 @@ function Play_Callback(hObject, eventdata, handles)
     pixph_c = ceil(vidWidth/handles.data.phos_c)+1;  
     pixph_r = ceil(vidHeight/handles.data.phos_r)+1;
     
-    %% Insert the variables in the box to pass in the funtion
+    %% Insert the variables in the box to pass in the function
     box_margin{1} = handles.data.ele_c;
     box_margin{2} = handles.data.ele_r;  
     box_margin{3} = pixph_r;
@@ -236,38 +236,32 @@ function Play_Callback(hObject, eventdata, handles)
 %                 hObject.String = 'Continue';
 %             end
 
-
-            % Rotate input video frame and display original and rotated
-            % frames on figure
 %             while strcmp(hObject.String, 'Pause') && ~isDone(vid)
 
-%                 videoPlayerLEFT = vision.VideoPlayer;
-%                 videoPlayerRIGHT = vision.VideoPlayer;
-                
-            viewReal = vision.DeployableVideoPlayer;
-            viewPhosf = vision.DeployableVideoPlayer;
+         videoPlayerLEFT = vision.VideoPlayer;
+         videoPlayerRIGHT = vision.VideoPlayer;              
+%             viewReal = vision.DeployableVideoPlayer;
+%             viewPhosf = vision.DeployableVideoPlayer;
 
-            while ~isDone(vid)  
-               frame = step(vid); 
-               step(viewReal,frame)
+         while ~isDone(vid)  
+               frame = step(vid);
+%           Display input video frame on axis
+%               step(viewReal,frame)               
+               step(videoPlayerLEFT,frame)
+%               showFrameOnAxis(handles.axesReal, frame);
+%               imshow(frame,'Parent',handles.axesReal)
                
-%                 step(videoPlayerLEFT,frame)
-%                 Display input video frame on axis
-%                 showFrameOnAxis(handles.axisReal, frame);
-%               
-
-                [FrameModified] = spvmain(frame,handles.data.type_map,...
+               [FrameModified] = spvmain(frame,handles.data.type_map,...
                                   handles.data.mod_phos,handles.data.h,...
                                   handles.data.k,box_margin,vidHeight,vidWidth);
                 
-%                  step(videoPlayerRIGHT,FrameModified)
+%           Display Phosfened video from on axis
+%               imshow(frame,'Parent',handles.axesPhosfened)
+               step(videoPlayerRIGHT,FrameModified)
+%               step(viewPhosf,FrameModified)
+%               showFrameOnAxis(handles.axesPhosfened, FrameModified);
 
-                 step(viewPhosf,FrameModified)
-
-%                 Display Phosfened video from on axis
-%                 showFrameOnAxis(handles.axisPhosfened, FrameModified);
-
-            end
+         end
 
             % When video reaches the end of file, display "Start" on the
             % play button.
@@ -282,69 +276,86 @@ function Play_Callback(hObject, eventdata, handles)
 %        end 
 
 
-% --- Executes on button press in Stop.
-function Stop_Callback(hObject, eventdata, handles)
-   
-
-% --- Executes on button press in Pause.
-function Pause_Callback(hObject, eventdata, handles)
-
-
-% --- Executes on button press in x2.
-function x2_Callback(hObject, eventdata, handles)
-
-% --------------------------------------------------------------------
-function File_Callback(hObject, eventdata, handles)
-
-
-% --------------------------------------------------------------------
-function Edit_Callback(hObject, eventdata, handles)
-
-
-% --------------------------------------------------------------------
-function Sel_ImVid_Callback(hObject, eventdata, handles)
-    Select()
-
-
-% --------------------------------------------------------------------
-function Exit_Callback(hObject, eventdata, handles)
-
 % --------------------------------------------------------------------
 function Control_Panel_Callback(hObject, eventdata, handles)
-    %set StaticText (invisible) to control the first access 
-    set(handles.t_control_in,'String', 'si');
+    % set StaticText (invisible) to control the first access 
+    set(handles.t_control_in,'String', 'yes');
     data = ins_data(handles);
+    
 
-    %guidata(hObject,handles);
 
- 
-
- % --- Executes on button press in Import.
-function Import_Callback(hObject, eventdata, handles)
- %% Import the file name and path of video
+function ImportVideo_Callback(hObject, eventdata, handles)
+ %% Import the file name and path of video and enable the button
  
     path_now = cd();
-    [FileName,PathName] = uigetfile({'*.avi';'*.mp4'},'Select the VIDEO file',path_now); 
-    handles.FileName = FileName;
-    handles.PathName = PathName;
-    set(handles.Stop,'Enable', 'on')
-    set(handles.Play,'Enable', 'on')
-    set(handles.Pause,'Enable', 'on')
-    set(handles.Next,'Enable', 'on')
-    set(handles.x2,'Enable', 'on')
+    [FileNameVid,PathNameVid] = uigetfile({'*.avi';'*.mp4'},'Select the VIDEO file',path_now); 
+    handles.FileNameVid = FileNameVid;
+    handles.PathNameVid = PathNameVid;
+    set(handles.Stop,'Enable', 'on');
+    set(handles.Play,'Enable', 'on');
+    set(handles.Pause,'Enable', 'on');
+    set(handles.ConvImag,'Enable', 'off');
     
-    guidata(hObject,handles);       %% Save the modifications
+    %Save the modifications
+    guidata(hObject,handles);       
  
-% --- Executes on button press in Next.
-function Next_Callback(hObject, eventdata, handles)
-% hObject    handle to Next (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on key press with focus on Import and none of its controls.
-function Import_KeyPressFcn(hObject, eventdata, handles)
-% hObject    handle to Import (see GCBO)
+function ImportImage_Callback(hObject, eventdata, handles)
+ %% Import the file name and path of Image and enable the button
+ 
+    path_now = cd();
+    [FileNameIm,PathNameIm] = uigetfile({'*.jpg';'*.png';'*.tif';'*.gif';},'Select the IMAGE file',path_now); 
+    handles.FileNameIm = FileNameIm;
+    handles.PathNameIm = PathNameIm;
+    set(handles.ConvImag,'Enable', 'on');
+    set(handles.Stop,'Enable', 'off');
+    set(handles.Play,'Enable', 'off');
+    set(handles.Pause,'Enable', 'off');
+    
+    %Save the modifications
+    guidata(hObject,handles); 
+
+
+function ConvImag_Callback(hObject, eventdata, handles)
+%%  Phosfened Image
+
+    path_old = cd(handles.PathNameIm);
+    if not(exist('Image'))
+        Image = imread(handles.FileNameIm);
+    end
+    cd(path_old);
+    ImConv = rgb2gray(Image);
+    imshow(ImConv,'Parent',handles.axesReal);
+    
+    
+    %% Calculating the number of pixel for each phosfene
+    [xIm,yIm] = size(ImConv);
+    pixph_c = ceil(xIm/handles.data.phos_c)+1;  
+    pixph_r = ceil(yIm/handles.data.phos_r)+1;
+    
+    %% Insert the variables in the box to pass in the function
+    box_margin{1} = handles.data.ele_c;
+    box_margin{2} = handles.data.ele_r;  
+    box_margin{3} = pixph_r;
+    box_margin{4} = pixph_c;
+    
+    [ImPhosf] = spvmain(double(ImConv),handles.data.type_map,handles.data.mod_phos,...
+                        handles.data.h,handles.data.k,box_margin,yIm,xIm);
+                    
+    imshow(ImPhosf,'Parent',handles.axesPhosfened);
+
+    
+  
+
+
+
+
+
+
+% --- Executes on key press with focus on ImportVideo and none of its controls.
+function ImportVideo_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to ImportVideo (see GCBO)
 % eventdata  structure with the following fields (see UICONTROL)
 %	Key: name of the key that was pressed, in lower case
 %	Character: character interpretation of the key(s) that was pressed
@@ -360,3 +371,23 @@ function Stop_KeyPressFcn(hObject, eventdata, handles)
 %	Character: character interpretation of the key(s) that was pressed
 %	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in Stop.
+function Stop_Callback(hObject, eventdata, handles)
+   
+
+% --- Executes on button press in Pause.
+function Pause_Callback(hObject, eventdata, handles)
+
+
+% --------------------------------------------------------------------
+function File_Callback(hObject, eventdata, handles)
+
+
+% --------------------------------------------------------------------
+function Edit_Callback(hObject, eventdata, handles)
+
+
+% --------------------------------------------------------------------
+function Exit_Callback(hObject, eventdata, handles)

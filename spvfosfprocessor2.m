@@ -1,21 +1,28 @@
-function [ amplitude,intensity ] = spvfosfprocessor2( im,ch,type_map,h,k,dim_phos, varargin )
-%prende in ingresso la mappa di fosfeni, l'immagine,  un char ovvero ch che
-%puo essere inte, amp o intamp. nel caso uniform varargin conterra r,c
-%ovvero le righe e le colonne di ogni fosfene.
-%INPUT
-%
-%
-%
-%
-%
+function [ amplitude,intensity ] = spvfosfprocessor2( im,mod_phos,type_map,h,k,dim_phos, varargin )
+
+%%INPUT:
+%   Im: matrice che contiene i dati dell'immagine
+%   type_map: mappa dei fosfeni utilizzata uniforme oppure no 
+%   mod_phos: indica se la modulazione dell'immagine avviene in base 
+%             all'intensità, all'ampiezza oppure in entrambi i casi 
+%   h,k: sono dei parametri che mi indicano il rapporto tra il pixel 
+%   dell'immagine e la dimensione effettiva dell'elettrodo 
+%   dim_phos: array che contiene il numero di fosfeni per riga(fr) e per 
+%             colonna(fc) ed il numero di pixel per righe (r_ph) e di colonne
+%             (c_ph) che contiene ogni fosfene; 
+%   rim,cim: rapprensentano invece le dimensioni dell'immagine che deve essere 
+%            modificata (es:1280x720).
+
+%%OUTPUT:
+%   amplitude: matrice che contiene i valori delle ampiezze dei fosfeni 
+%   intensity: matrice che contiene i valori delle intensità dei fosfeni
+
 
 % if varargin{1} exist-> zoom
 r_mp=dim_phos{1};
 c_mp=dim_phos{2};
 rmp=dim_phos{3};
 cmp=dim_phos{4};
-
-
 
 % Check if all the image contributes on the electrode signal or 
 % just a Region of Interest will be renderized
@@ -53,7 +60,7 @@ switch(type_map)
         vett_r=linspace(0,r_imP,r_mp+1); % vector for row
         vett_c=linspace(0,c_imP,c_mp+1); % vector for column
       
-        switch(ch)
+        switch(mod_phos)
             case('Amplitude')
                 for np_c=2:length(vett_c)
                     for np_r=2:length(vett_r)
@@ -80,7 +87,7 @@ switch(type_map)
                 end
                 %then intensity to ones
                 amplitude=ones(length(coord_r),length(coord_c));
-                warning ('Check window dimension!! intensity not  consistent!!!')
+                % warning ('Check window dimension!! intensity not  consistent!!!')
                 varargout{1}=amplitude;
                 varargout{2}=intensity;
 
@@ -130,42 +137,7 @@ end
 % intensity=k*ones(length(x),1); %crea il vettore dell'intensità moltiplicato per un parametro scelto dall'utente
 % tmp=max(std(im));
 % switch(type_map)
-%     case{'Uniform'}
-%         d=2*min(r,c);
-%         lr=round(r*rim/rmp);
-%         lc=round(c*cim/cmp);
-%         switch(ch)
-%             case('Amplitude')
-%                 for i=1:length(x)
-%                     xp=round(x(i)*rim/rmp);
-%                     yp=round(y(i)*cim/cmp);
-% %                     amplitude(i)=std(std(im(xp-lr:xp+lr,yp-lc:yp+lc)));
-%                     amplitude(i)=std(std(im(xp-lr:xp+lr,yp-lc:yp+lc)));
-%                 end
-%                 intensity=k*ones(length(x),1);
-%                 amplitude=amplitude*d/tmp;
-%                 varargout{1}=amplitude;
-%                 varargout{2}=intensity;
-%            case('Intensity')
-%                 for i=1:length(x)
-%                     xp=round(x(i)*rim/rmp);
-%                     yp=round(y(i)*cim/cmp);
-%                     intensity(i)=mean(mean(im(xp-lr:xp+lr,yp-lc:yp+lc)));
-%                 end
-%                 amplitude=h*ones(length(x),1);
-%                 varargout{1}=amplitude;
-%                 varargout{2}=intensity;
-%            case('& Amplitude-Intensity')
-%                 for i=1:length(x)
-%                     xp=round(x(i)*rim/rmp);
-%                     yp=round(y(i)*cim/cmp);
-%                     amplitude(i)=std(std(im(xp-lr:xp+lr,yp-lc:yp+lc)));
-%                     intensity(i)=mean(mean(im(xp-lr:xp+lr,yp-lc:yp+lc)));
-%                 end
-%                 amplitude=amplitude*d/tmp;
-%                 varargout{1}=amplitude;
-%                 varargout{2}=intensity;
-%         end
+
 %     case('Not Uniform')
 %         dr=varargin{1};
 %         dc=varargin{2};
