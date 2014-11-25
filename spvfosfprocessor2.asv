@@ -13,14 +13,14 @@ function [ intensity,spread ] = spvfosfprocessor2( Im,type_map,mod_phos,dim_phos
 %   spread: matrice che contiene i valori delle ampiezze dei fosfeni 
 %   intensity: matrice che contiene i valori delle intensità dei fosfeni
 
-    phos_r = dim_phos{1};
-    phos_c = dim_phos{2};
-    rmap = dim_phos{3};   
-    cmap = dim_phos{4};
+r_mp = dim_phos{1};
+c_mp = dim_phos{2};
+rmp = dim_phos{3};   
+cmp = dim_phos{4};
 
 %% Initialize output matrices
-spread = ones(phos_r,phos_c);
-intensity = zeros(phos_r,phos_c);
+spread = ones(r_mp,c_mp);
+intensity = zeros(r_mp,c_mp);
 
 switch(type_map)
     case{'Uniform'}
@@ -28,12 +28,12 @@ switch(type_map)
         c_imPh= size(Im,2);  % num row in the image ROI(region of interest)
         
         % For row
-        D_r = r_imPh/phos_r;
+        D_r = r_imPh/r_mp;
         sD_r = D_r/2;
         coord_r = sD_r:D_r:r_imPh;
         
         % For colunm
-        D_c = c_imPh/phos_c;
+        D_c = c_imPh/c_mp;
         sD_c = D_c/2;
         coord_c = sD_c:D_c:c_imPh;
         
@@ -43,8 +43,8 @@ switch(type_map)
         end
 
       
-        vett_r = linspace(1,r_imPh,phos_r+1); % vector for row
-        vett_c = linspace(1,c_imPh,phos_c+1); % vector for column
+        vett_r = linspace(1,r_imPh,r_mp+1); % vector for row
+        vett_c = linspace(1,c_imPh,c_mp+1); % vector for column
         
         % Floor the indices
         vettMIN_r = floor(vett_r); % vector for row

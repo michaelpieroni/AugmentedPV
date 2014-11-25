@@ -22,21 +22,27 @@ switch (type_map)
         
          fc = box_margins{1};      
          fr = box_margins{2};       
-         r_ph = box_margins{3};        
-         c_ph = box_margins{4};
+         c_ph = box_margins{3};        
+         r_ph = box_margins{4};
          
          % spvfosfmap crea la mappa di fosfeni
-         [ map,rmap,cmap ] = spvfosfmap( type_map,fr,fc,r_ph,c_ph );  
+%          [ map,rmap,cmap ] = spvfosfmap( type_map,fr,fc,r_ph,c_ph );  
+%          [ map_int,map_std ] = spvfosfmap2( type_map,fr,fc);  
          dim_phos{1} = fr;
          dim_phos{2} = fc;
+         rmap = fr*r_ph;
+         cmap = fc*c_ph;
          dim_phos{3} = rmap;
          dim_phos{4} = cmap;
          
          % spvfosfprocessor provvede a campionare la matrice
-         [ amp,inte ] = spvfosfprocessor2( im,mod_phos,type_map,h,k,dim_phos);
+         [ inte,spread ] = spvfosfprocessor2( im,type_map,mod_phos,dim_phos);
          
          % spvfosfrender renderizza l'immagine fosfenizzata
-         [ m ] = spvfosfrender( map,type_map,inte,amp,r_ph,c_ph); 
+         
+         % TODO: include also h,k in the analysis for physical world
+         % dimension
+         [ m ] = spvfosfrender( inte,spread,type_map); 
          
     case{'Not Uniform'}
         error ('Not uniform is not already implemented')

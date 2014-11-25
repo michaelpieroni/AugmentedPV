@@ -297,17 +297,14 @@ function ImportImage_Callback(hObject, eventdata, handles)
     
     %% Calculating the number of pixel for each phosfene
     [xIm,yIm] = size(ImProc);     
-%     pixph_c = ceil(xIm/handles.data.phos_c);  
-%     pixph_r = ceil(yIm/handles.data.phos_r);
-    pixph_c = xIm/handles.data.phos_c;  
-    pixph_r = yIm/handles.data.phos_r;
-
+    pixph_c = ceil(xIm/handles.data.phos_c);  
+    pixph_r = ceil(yIm/handles.data.phos_r);
     
     %% Insert the variables in the box to pass in the function
-    box_margin{1} = handles.data.phos_r;
-    box_margin{2} = handles.data.phos_c;  
-    box_margin{3} = pixph_r;
-    box_margin{4} = pixph_c;
+    box_margin{1} = handles.data.ele_c;
+    box_margin{2} = handles.data.ele_r;  
+    box_margin{3} = pixph_c;
+    box_margin{4} = pixph_r;
     
     %% Convert image stored
     [ImPhosf] = spvmain2(ImProc,handles.data.type_map,handles.data.mod_phos,...
@@ -319,6 +316,10 @@ function ImportImage_Callback(hObject, eventdata, handles)
 %     %Save the modifications
 %     guidata(hObject,handles); 
   
+
+
+
+
 
 
 % --- Executes on key press with focus on ImportVideo and none of its controls.

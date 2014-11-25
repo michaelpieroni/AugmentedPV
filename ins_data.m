@@ -22,7 +22,7 @@ function varargout = ins_data(varargin)
 
 % Edit the above text to modify the response to help ins_data
 
-% Last Modified by GUIDE v2.5 18-Oct-2014 09:21:16
+% Last Modified by GUIDE v2.5 25-Nov-2014 11:27:19
 
 % Begin initialization code - DO NOT EDIT
 
@@ -81,9 +81,9 @@ function inizialize_edit(hObject, eventdata, handles,ctM)
     c = num2str(get(ctM.text_elec,'String'));
     set(handles.edit_elec_c,'String',c);
 
-%Dimension Electrode
-    d = num2str(get(ctM.text_dim,'String'));
-    set(handles.edit_dim,'String',d);
+%Distance of electrode
+    d = num2str(get(ctM.text_distance,'String'));
+    set(handles.edit_distance,'String',d);
 
 %Space Response
     sp = num2str(get(ctM.text_sp,'String'));
@@ -102,10 +102,10 @@ function inizialize_edit(hObject, eventdata, handles,ctM)
     set(handles.edit_phos_c,'String',pc);
 
 %H e K: parameters used to convert the pixels in mm of electrodes
-    h = num2str(get(ctM.text_h,'String'));
-    set(handles.edit_h,'String',h);
-    k = num2str(get(ctM.text_k,'String'));
-    set(handles.edit_k,'String',k);
+    RCol = num2str(get(ctM.text_RendCol,'String'));
+    set(handles.edit_RendCol,'String',RCol);
+    RRow = num2str(get(ctM.text_RendRow,'String'));
+    set(handles.edit_RendRow,'String',RRow);
 
 %Type Map
     ty = get(ctM.text_ty,'String');
@@ -130,8 +130,8 @@ function inizialize_edit(hObject, eventdata, handles,ctM)
     end
 
 %Modulation Phosfenes
-    mp = get(ctM.text_mph,'String');
-    switch (mp)
+    mph = get(ctM.text_mph,'String');
+    switch (mph)
         case {' '}
             set(handles.pop_mod_phos,'Value',1);
         case {'Amplitude'}
@@ -143,8 +143,8 @@ function inizialize_edit(hObject, eventdata, handles,ctM)
     end
 
 %Profile of Electrodes
-    p = get(ctM.text_profile,'String');
-    switch (p)
+    prof = get(ctM.text_profile,'String');
+    switch (prof)
         case {' '}
             set(handles.pop_profile,'Value',1);
         case {'Square'}
@@ -152,8 +152,19 @@ function inizialize_edit(hObject, eventdata, handles,ctM)
         case {'Circle'}
             set(handles.pop_profile,'Value',3);
     end     
-
-    guidata(hObject,handles);
+    
+%Type Rendering
+    tyrend = get(ctM.text_tyrender,'String');
+    switch (tyrend)
+        case {' '}
+            set(handles.pop_tyrender,'Value',1);
+        case {'Default'}
+            set(handles.pop_tyrender,'Value',2);
+        case {'Design Not Uniform'}
+            set(handles.pop_tyrender,'Value',3);
+    end
+    
+guidata(hObject,handles);
             
         
 
@@ -171,67 +182,159 @@ varargout{1} = handles.output;
 
 % --- Executes on button press in push_insert.
 function push_insert_Callback(hObject, eventdata, handles)
-%      if isempty(edit_dim) || isempty(edit_space) || isempty(edit_num) || isempty(edit_time)|| isempty(pop_mod_prot)|| isempty(pop_mod_phos)|| isempty(pop_profile)|| isempty(type_map)
-%         errordlg('Please, Fill In On Fiel','Error')
+
+%      if ~isempty(handles.edit_distance) || ~isempty(handles.edit_space) ||...
+%         ~isempty(handles.edit_elec_r) || ~isempty(handles.edit_elec_c)||...
+%         ~isempty(handles.edit_time) || ~isempty(handles.edit_RendCol)||...
+%         ~isempty(handles.edit_RendRow)
+%     %mancano ancora da controllare i pop up menu
+%         errordlg('Please, Fill In All Fields','Error')
+%      
 %      else
     
-      handles.data.ele_r = str2num(get(handles.edit_elec_r,'String'));
-      handles.data.ele_c = str2num(get(handles.edit_elec_c,'String'));
-      handles.data.phos_r = str2num(get(handles.edit_phos_r,'String'));
-      handles.data.phos_c = str2num(get(handles.edit_phos_c,'String'));
-      handles.data.dim = str2num(get(handles.edit_dim,'String'));
-      handles.data.r_space = str2num(get(handles.edit_space,'String'));
-      handles.data.r_time = str2num(get(handles.edit_time,'String'));
-      handles.data.h = str2num(get(handles.edit_h,'String'));
-      handles.data.k = str2num(get(handles.edit_k,'String'));
+        handles.data.ele_r = str2num(get(handles.edit_elec_r,'String'));
+        handles.data.ele_c = str2num(get(handles.edit_elec_c,'String'));
+        handles.data.phos_r = str2num(get(handles.edit_phos_r,'String'));
+        handles.data.phos_c = str2num(get(handles.edit_phos_c,'String'));
+        handles.data.distance = str2num(get(handles.edit_distance,'String'));
+        handles.data.r_space = str2num(get(handles.edit_space,'String'));
+        handles.data.r_time = str2num(get(handles.edit_time,'String'));
+        handles.data.RendCol = str2num(get(handles.edit_RendCol,'String'));
+        handles.data.RendRow = str2num(get(handles.edit_RendRow,'String'));
       
-      %select modulation prothesis
-      list1 = get(handles.pop_mod_prot,'String');
-      m = get(handles.pop_mod_prot,'Value');
-      handles.data.mod_prot = char(list1(m));
+        %select modulation prothesis
+        list1 = get(handles.pop_mod_prot,'String');
+        m = get(handles.pop_mod_prot,'Value');
+        handles.data.mod_prot = char(list1(m));
 
-      %select profile
-      list2 = get(handles.pop_profile,'String');
-      pr = get(handles.pop_profile,'Value');
-      handles.data.profile = char(list2(pr));
+        %select profile
+        list2 = get(handles.pop_profile,'String');
+        pr = get(handles.pop_profile,'Value');
+        handles.data.profile = char(list2(pr));
     
-      %select modulation phosphene
-      list3 = get(handles.pop_mod_phos,'String');
-      ph = get(handles.pop_mod_phos,'Value');
-      handles.data.mod_phos = char(list3(ph));
+        %select modulation phosphene
+        list3 = get(handles.pop_mod_phos,'String');
+        ph = get(handles.pop_mod_phos,'Value');
+        handles.data.mod_phos = char(list3(ph));
         
-      %select type map
-      list4 = get(handles.pop_type,'String');
-      ty = get(handles.pop_type,'Value');
-      handles.data.type_map = char(list4(ty));
+        %select type map
+        list4 = get(handles.pop_type,'String');
+        ty = get(handles.pop_type,'Value');
+        handles.data.type_map = char(list4(ty));
+        
+        %select type rendering
+        list5 = get(handles.pop_tyrender,'String');
+        tyr = get(handles.pop_tyrender,'Value');
+        handles.data.ty_render = char(list5(tyr));
 
-      guidata(hObject,handles)
-      % Stored handles.data as global variable (0: used all figure)
-      setappdata(0,'varGlobal',handles.data)
-      close;
-      Main();
-      
+        guidata(hObject,handles)
+        % Stored handles.data as global variable (0: used all figure)
+        setappdata(0,'varGlobal',handles.data)
+        close;
+        Main();
+
      
    
       
 function push_clear_Callback(hObject, eventdata, handles)
+    
 %%  Clear edit and pop menu
     set(handles.edit_elec_r,'String','');
     set(handles.edit_elec_c,'String','');
     set(handles.edit_phos_r,'String','');
     set(handles.edit_phos_c,'String','');
-    set(handles.edit_dim,'String',' ');
+    set(handles.edit_distance,'String',' ');
     set(handles.edit_space,'String','');
     set(handles.edit_time,'String','');
-    set(handles.edit_h,'String',' ');
-    set(handles.edit_k,'String',' ');
+    set(handles.edit_RendCol,'String',' ');
+    set(handles.edit_RendRow,'String',' ');
     set(handles.pop_profile,'Value',1);
     set(handles.pop_type,'Value',1);
     set(handles.pop_mod_phos,'Value',1);
     set(handles.pop_mod_prot,'Value',1);
+    set(handles.pop_tyrender,'Value',1);
+    guidata(hObject,handles);
+
+    
+    
+function Set_Default_Callback(hObject, eventdata, handles)
+%%  Set to defaul value
+    
+    set(handles.edit_elec_r,'String',num2str(10));
+    handles.data.ele_r = 10;
+    
+    set(handles.edit_elec_c,'String',num2str(10));
+    handles.data.ele_c = 10;
+    
+    set(handles.edit_phos_r,'String',handles.data.ele_r);
+    handles.data.phos_r = handles.data.ele_r;
+    
+    set(handles.edit_phos_c,'String',handles.data.ele_c);
+    handles.data.phos_c = handles.data.ele_c;
+    
+    set(handles.edit_distance,'String',num2str(10));
+    handles.data.distance = 10;
+    
+    set(handles.pop_profile,'Value',3);
+    handles.data.profile = 'Circle';
+    
+    set(handles.edit_space,'String',num2str(10));
+    handles.data.r_space = 10;
+    
+    set(handles.edit_time,'String',num2str(10));
+    handles.data.r_time = 10;
+    
+    set(handles.pop_mod_prot,'Value',2);
+    handles.data.mod_prot = 'Voltage';
+    
+    set(handles.pop_mod_phos,'Value',2);
+    handles.data.mod_phos = 'Amplitude';
+    
+    set(handles.pop_type,'Value',2);
+    handles.data.type_map = 'Uniform';
+    
+    set(handles.pop_tyrender,'Value',2);
+    handles.data.ty_render = 'Default';
+    
+    set(handles.edit_RendRow,'String',num2str(1));
+    handles.data.RendRow = 10;
+    
+    set(handles.edit_RendCol,'String',num2str(1));
+    handles.data.RendCol = 10;
+    
     guidata(hObject,handles);
 
 
+
+function edit_elec_r_Callback(hObject, eventdata, handles)
+%%  At the moment: the number phosfene is equal the number electrode 
+    a = get(handles.edit_elec_r,'String');
+    set(handles.edit_phos_r,'String',a);
+    guidata(hObject,handles);
+
+        
+function edit_elec_c_Callback(hObject, eventdata, handles)
+%%  At the moment: the number phosfene is equal the number electrode 
+    a = get(handles.edit_elec_c,'String');
+    set(handles.edit_phos_c,'String',a);
+    guidata(hObject,handles);
+    
+    
+function pop_tyrender_Callback(hObject, eventdata, handles)
+%%  Enable edit Row and Column in case of Design Not Uniform
+    tyrend = get(handles.pop_tyrender,'Value');
+    if tyrend == 3
+       set(handles.edit_RendCol,'Enable','on');
+       set(handles.edit_RendRow,'Enable','on');
+    else
+       set(handles.edit_RendCol,'Enable','off');
+       set(handles.edit_RendRow,'Enable','off');
+    end
+    
+    
+   
+    
+    
 function edit_type_Callback(hObject, eventdata, handles)
 
 
@@ -255,15 +358,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
-function edit_elec_r_Callback(hObject, eventdata, handles)
-%%  At the moment: the number phosfene is equal the number electrode 
-    a = get(handles.edit_elec_r,'String');
-    set(handles.edit_phos_r,'String',a);
-    guidata(hObject,handles);
-
-
-% --- Executes during object creation, after setting all properties.
+    
 function edit_elec_r_CreateFcn(hObject, eventdata, handles)
 
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -272,11 +367,11 @@ end
 
 
 
-function edit_dim_Callback(hObject, eventdata, handles)
+function edit_distance_Callback(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
-function edit_dim_CreateFcn(hObject, eventdata, handles)
+function edit_distance_CreateFcn(hObject, eventdata, handles)
 
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
@@ -293,7 +388,6 @@ function edit_space_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
 
 
 function edit_time_Callback(hObject, eventdata, handles)
@@ -346,12 +440,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-function edit_elec_c_Callback(hObject, eventdata, handles)
-%%  At the moment: the number phosfene is equal the number electrode 
-    a = get(handles.edit_elec_c,'String');
-    set(handles.edit_phos_c,'String',a);
-    guidata(hObject,handles);
-
 
 % --- Executes during object creation, after setting all properties.
 function edit_elec_c_CreateFcn(hObject, eventdata, handles)
@@ -392,11 +480,11 @@ end
 
 
 
-function edit_h_Callback(hObject, eventdata, handles)
+function edit_RendCol_Callback(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
-function edit_h_CreateFcn(hObject, eventdata, handles)
+function edit_RendCol_CreateFcn(hObject, eventdata, handles)
 
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
@@ -406,11 +494,11 @@ end
 
 
 
-function edit_k_Callback(hObject, eventdata, handles)
+function edit_RendRow_Callback(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
-function edit_k_CreateFcn(hObject, eventdata, handles)
+function edit_RendRow_CreateFcn(hObject, eventdata, handles)
 
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
@@ -423,3 +511,18 @@ end
 function varagout = Con_Panel_CloseRequestFcn(hObject, eventdata, handles,varargin)
  
 delete(hObject);
+
+
+% --- Executes during object creation, after setting all properties.
+function pop_tyrender_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pop_tyrender (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
