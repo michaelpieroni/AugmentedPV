@@ -63,7 +63,7 @@ switch (type_map)
                  else
                      error ('Specify number of row and column for rendering or select Defaul!')
                  end
-         
+         end
          [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend); 
          
 %          dx=dxP*size(m,2)/fc;         

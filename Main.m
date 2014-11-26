@@ -282,6 +282,9 @@ function ImportImage_Callback(hObject, eventdata, handles)
     [FileNameIm,PathNameIm] = uigetfile({'*.*';'*.jpg';'*.png';'*.tif';'*.gif';},'Select the IMAGE file',path_now); 
     handles.FileNameIm = FileNameIm;
     handles.PathNameIm = PathNameIm;
+    if PathNameIm == 0
+        return
+    end
     
 %%  Phosfened Image
     path_old = cd(handles.PathNameIm);

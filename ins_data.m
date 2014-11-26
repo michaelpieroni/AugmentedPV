@@ -261,10 +261,10 @@ function Set_Default_Callback(hObject, eventdata, handles)
 %%  Set to defaul value
     
     set(handles.edit_elec_r,'String',num2str(10));
-    handles.data.ele_r = 10;
+    handles.data.ele_r = 64;
     
     set(handles.edit_elec_c,'String',num2str(10));
-    handles.data.ele_c = 10;
+    handles.data.ele_c = 64;
     
     set(handles.edit_phos_r,'String',handles.data.ele_r);
     handles.data.phos_r = handles.data.ele_r;
