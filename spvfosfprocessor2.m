@@ -78,9 +78,9 @@ switch(type_map)
                  switch (mod_phos)
                       case('Amplitude')
                           spread(ir-1,ic-1) = std(Btot);
-                          intensity(ir-1,ic-1) = 1;                         
+                          intensity(ir-1,ic-1) = 1; %normalized                         
                       case('Intensity')
-                         spread(ir-1,ic-1) = 1;
+                         spread(ir-1,ic-1) = 1; %normalized
                          intensity(ir-1,ic-1) = mean(Btot);
                      case('Amplitude & Intensity')
                          intensity(ir-1,ic-1) = mean(Btot);

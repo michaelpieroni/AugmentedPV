@@ -64,7 +64,7 @@ switch (type_map)
                      error ('Specify number of row and column for rendering or select Defaul!')
                  end
          end
-         [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend, mod_phos); 
+         [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend, type_map); 
       %% sezione di prova   
          Mint = inte;
          Mstd = spread;

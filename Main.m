@@ -319,8 +319,12 @@ function ImportImage_Callback(hObject, eventdata, handles)
     [ImPhosf] = spvmain2(ImProc,handles.data.type_map,handles.data.mod_phos,...
                 box_margin,handles.data.distance,handles.data.ty_render,...
                 handles.data.RendRow,handles.data.RendCol);
-
-    imshow(ImPhosf,'Parent',handles.axesPhosfened);
+    %% Adjust image representation
+    minV=min(reshape(ImPhosf,1,[]));
+    maxV=max(reshape(ImPhosf,1,[]));
+    
+    
+    imshow(ImPhosf,[minV maxV],'Parent',handles.axesPhosfened);
 % 
 %     %Save the modifications
 %     guidata(hObject,handles); 
