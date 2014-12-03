@@ -208,45 +208,51 @@ function Play_Callback(hObject, eventdata, handles)
     vidFormat = vid.info.VideoFormat;       %Format of Video 
     
     %% Calculating the number of pixel for each phosfene
-    pixph_c = ceil(vidWidth/handles.data.phos_c)+1;  
-    pixph_r = ceil(vidHeight/handles.data.phos_r)+1;
+    pixph_c = vidWidth/handles.data.phos_c;  
+    pixph_r = vidHeight/handles.data.phos_r;
     
     %% Insert the variables in the box to pass in the function
-    box_margin{1} = handles.data.ele_c;
-    box_margin{2} = handles.data.ele_r;  
+    box_margin{1} = handles.data.phos_r;
+    box_margin{2} = handles.data.phos_c;  
     box_margin{3} = pixph_r;
     box_margin{4} = pixph_c;
- 
-    %% don't use modulation = Not Uniform
-   
+
 %% http://it.mathworks.com/help/vision/functionlist.html
-% da consultare per tutte le funzionalità della computer vision di Matlab
+%  da consultare per tutte le funzionalità della computer vision di Matlab
 %%    
-        videoPlayerLEFT = vision.VideoPlayer;
-         videoPlayerRIGHT = vision.VideoPlayer;              
+    videoPlayerLEFT = vision.VideoPlayer;
+    videoPlayerRIGHT = vision.VideoPlayer;              
 %             viewReal = vision.DeployableVideoPlayer;
 %             viewPhosf = vision.DeployableVideoPlayer;
-
-         while ~isDone(vid)  
-             
-               frame = step(vid);
+      
+    handles.vid_pause = 1;
+    handles.vid_stop = 1;
+    
+ %   while handles.vid_stop == 1
+        while ~isDone(vid) 
+  %          while handles.vid_pause ==1
+                %loop for wait the push play
+   %         end
+            
+            frame = step(vid);
 %           Display input video frame on axis
 %               step(viewReal,frame)               
-               step(videoPlayerLEFT,frame)
+            step(videoPlayerLEFT,frame)
 %               showFrameOnAxis(handles.axesReal, frame);
-%               imshow(frame,'Parent',handles.axesReal)
                
-               [FrameModified] = spvmain(frame,handles.data.type_map,...
-                                  handles.data.mod_phos,handles.data.h,...
-                                  handles.data.k,box_margin,vidHeight,vidWidth);
-                
+            [FrameModified] = spvmain2(frame,handles.data.type_map,...
+                              handles.data.mod_phos,box_margin,...
+                              handles.data.distance,handles.data.ty_render,...
+                              handles.data.RendRow,handles.data.RendCol);     
+                              
 %           Display Phosfened video from on axis
-%               imshow(frame,'Parent',handles.axesPhosfened)
-               step(videoPlayerRIGHT,FrameModified)
+             step(videoPlayerRIGHT,FrameModified)
 %               step(viewPhosf,FrameModified)
 %               showFrameOnAxis(handles.axesPhosfened, FrameModified);
-
-         end
+        end
+        
+   %     break 
+   %end
 
 
 
@@ -268,8 +274,7 @@ function ImportVideo_Callback(hObject, eventdata, handles)
     set(handles.Stop,'Enable', 'on');
     set(handles.Play,'Enable', 'on');
     set(handles.Pause,'Enable', 'on');
-    set(handles.ConvImag,'Enable', 'off');
-    
+   
     %Save the modifications
     guidata(hObject,handles);       
  
@@ -300,8 +305,6 @@ function ImportImage_Callback(hObject, eventdata, handles)
     
     %% Calculating the number of pixel for each phosfene
     [xIm,yIm] = size(ImProc);     
-%     pixph_c = ceil(xIm/handles.data.phos_c);  
-%     pixph_r = ceil(yIm/handles.data.phos_r);
     pixph_c = xIm/handles.data.phos_c;  
     pixph_r = yIm/handles.data.phos_r;
 
@@ -346,12 +349,15 @@ function Stop_KeyPressFcn(hObject, eventdata, handles)
 
 % --- Executes on button press in Stop.
 function Stop_Callback(hObject, eventdata, handles)
-   
+    handles.vid_stop = 0;
+    guidata(hObject,handles); 
 
 % --- Executes on button press in Pause.
 function Pause_Callback(hObject, eventdata, handles)
+    handles.vid_pause = 0;
+    guidata(hObject,handles); 
 
-
+    
 % --------------------------------------------------------------------
 function File_Callback(hObject, eventdata, handles)
 

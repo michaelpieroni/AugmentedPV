@@ -65,6 +65,17 @@ switch (type_map)
                  end
          end
          [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend); 
+      %% sezione di prova   
+         Mint = inte;
+         Mstd = spread;
+         figure;
+         subplot(2,1,1); imagesc(Mint)
+         xlabel('Matrice Intensità');
+         subplot(2,1,2); imagesc(Mstd)
+         xlabel('Matrice Deviazione Standard');
+         
+         
+         
          
 %          dx=dxP*size(m,2)/fc;         
 %          dy=dyP*size(m,1)/fr;         
