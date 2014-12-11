@@ -22,7 +22,7 @@ function varargout = ins_data(varargin)
 
 % Edit the above text to modify the response to help ins_data
 
-% Last Modified by GUIDE v2.5 03-Dec-2014 14:28:38
+% Last Modified by GUIDE v2.5 03-Dec-2014 15:30:51
 
 % Begin initialization code - DO NOT EDIT
 
@@ -101,12 +101,6 @@ function inizialize_edit(hObject, eventdata, handles,ctM)
     pc = num2str(get(ctM.text_phc,'String'));
     set(handles.edit_phos_c,'String',pc);
 
-%H e K: parameters used to convert the pixels in mm of electrodes
-    RCol = num2str(get(ctM.text_RendCol,'String'));
-    set(handles.edit_RendCol,'String',RCol);
-    RRow = num2str(get(ctM.text_RendRow,'String'));
-    set(handles.edit_RendRow,'String',RRow);
-
 %Type Map
     ty = get(ctM.text_ty,'String');
     switch (ty)
@@ -153,18 +147,22 @@ function inizialize_edit(hObject, eventdata, handles,ctM)
             set(handles.pop_profile,'Value',3);
     end     
     
-%Type Rendering
-    tyrend = get(ctM.text_tyrender,'String');
-    switch (tyrend)
-        case {' '}
-            set(handles.pop_tyrender,'Value',1);
-        case {'Default'}
-            set(handles.pop_tyrender,'Value',2);
-        case {'Design Not Uniform'}
-            set(handles.pop_tyrender,'Value',3);
+%Rendering Not Uniform
+    rr = get(ctM.text_RendRow,'String');
+    switch rr 
+        case{'Default'}
+            set(handles.check_render,'Value',0);
+            set(handles.edit_RendCol,'String','');
+            set(handles.edit_RendRow,'String','');
+        otherwise
+            RCol = num2str(get(ctM.text_RendCol,'String'));
+            set(handles.edit_RendCol,'String',RCol);
+            RRow = num2str(get(ctM.text_RendRow,'String'));
+            set(handles.edit_RendRow,'String',RRow);
     end
+     
     
-guidata(hObject,handles);
+    guidata(hObject,handles);
             
         
 
@@ -183,14 +181,14 @@ varargout{1} = handles.output;
 % --- Executes on button press in push_insert.
 function push_insert_Callback(hObject, eventdata, handles)
 
-%      if ~isempty(handles.edit_distance) || ~isempty(handles.edit_space) ||...
-%         ~isempty(handles.edit_elec_r) || ~isempty(handles.edit_elec_c)||...
-%         ~isempty(handles.edit_time) || ~isempty(handles.edit_RendCol)||...
-%         ~isempty(handles.edit_RendRow)
-%     %mancano ancora da controllare i pop up menu
-%         errordlg('Please, Fill In All Fields','Error')
-%      
-%      else
+     if ~isempty(handles.edit_distance) || ~isempty(handles.edit_space) ||...
+        ~isempty(handles.edit_elec_r) || ~isempty(handles.edit_elec_c)||...
+        ~isempty(handles.edit_time) || ~isempty(handles.edit_RendCol)||...
+        ~isempty(handles.edit_RendRow)
+    %mancano ancora da controllare i pop up menu
+        errordlg('Please, Fill In All Fields','Error')
+        return
+     else
     
         handles.data.ele_r = str2num(get(handles.edit_elec_r,'String'));
         handles.data.ele_c = str2num(get(handles.edit_elec_c,'String'));
@@ -199,8 +197,7 @@ function push_insert_Callback(hObject, eventdata, handles)
         handles.data.distance = str2num(get(handles.edit_distance,'String'));
         handles.data.r_space = str2num(get(handles.edit_space,'String'));
         handles.data.r_time = str2num(get(handles.edit_time,'String'));
-        handles.data.RendCol = str2num(get(handles.edit_RendCol,'String'));
-        handles.data.RendRow = str2num(get(handles.edit_RendRow,'String'));
+        
       
         %select modulation prothesis
         list1 = get(handles.pop_mod_prot,'String');
@@ -222,17 +219,23 @@ function push_insert_Callback(hObject, eventdata, handles)
         ty = get(handles.pop_type,'Value');
         handles.data.type_map = char(list4(ty));
         
-        %select type rendering
-        list5 = get(handles.pop_tyrender,'String');
-        tyr = get(handles.pop_tyrender,'Value');
-        handles.data.ty_render = char(list5(tyr));
+        %select num row and column of renderig not uniform
+        ch_abil = get(handles.check_render,'Value');
+        if ch_abil == 1
+           handles.data.RendCol = str2num(get(handles.edit_RendCol,'String'));
+           handles.data.RendRow = str2num(get(handles.edit_RendRow,'String'));
+        else
+           handles.data.RendCol = 'Default';
+           handles.data.RendRow = 'Default';
+        end
+           
 
         guidata(hObject,handles)
         % Stored handles.data as global variable (0: used all figure)
         setappdata(0,'varGlobal',handles.data)
         close;
         Main();
-
+     end
      
    
       
@@ -252,7 +255,7 @@ function push_clear_Callback(hObject, eventdata, handles)
     set(handles.pop_type,'Value',1);
     set(handles.pop_mod_phos,'Value',1);
     set(handles.pop_mod_prot,'Value',1);
-    set(handles.pop_tyrender,'Value',1);
+    set(handles.check_render,'Value',0);
     guidata(hObject,handles);
 
     
@@ -293,14 +296,13 @@ function Set_Default_Callback(hObject, eventdata, handles)
     set(handles.pop_type,'Value',2);
     handles.data.type_map = 'Uniform';
     
-    set(handles.pop_tyrender,'Value',2);
-    handles.data.ty_render = 'Default';
+    set(handles.check_render,'Value',0);
     
-    set(handles.edit_RendRow,'String',num2str(1));
-    handles.data.RendRow = 10;
+    set(handles.edit_RendRow,'String',' ');
+    handles.data.RendRow = 'Default';
     
-    set(handles.edit_RendCol,'String',num2str(1));
-    handles.data.RendCol = 10;
+    set(handles.edit_RendCol,'String',' ');
+    handles.data.RendCol = 'Default';
     
     guidata(hObject,handles);
 
@@ -319,19 +321,21 @@ function edit_elec_c_Callback(hObject, eventdata, handles)
     set(handles.edit_phos_c,'String',a);
     guidata(hObject,handles);
     
+
     
-function pop_tyrender_Callback(hObject, eventdata, handles)
-%%  Enable edit Row and Column in case of Design Not Uniform
-    tyrend = get(handles.pop_tyrender,'Value');
-    if tyrend == 3
+
+% --- Executes on button press in check_render.
+function check_render_Callback(hObject, eventdata, handles)
+
+    ch_abil = get(handles.check_render,'Value');
+    if ch_abil == 1
        set(handles.edit_RendCol,'Enable','on');
        set(handles.edit_RendRow,'Enable','on');
     else
        set(handles.edit_RendCol,'Enable','off');
        set(handles.edit_RendRow,'Enable','off');
     end
-    
-    
+
    
     
     
@@ -528,56 +532,9 @@ end
 
 
 
-% --- Executes on button press in check_render.
-function check_render_Callback(hObject, eventdata, handles)
-% hObject    handle to check_render (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of check_render
 
 
 
-function edit11_Callback(hObject, eventdata, handles)
-% hObject    handle to edit11 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit11 as text
-%        str2double(get(hObject,'String')) returns contents of edit11 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit11_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit11 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
 
 
 
-function edit12_Callback(hObject, eventdata, handles)
-% hObject    handle to edit12 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit12 as text
-%        str2double(get(hObject,'String')) returns contents of edit12 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit12_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit12 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end

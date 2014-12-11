@@ -25,9 +25,6 @@ switch (type_map)
        
        vett_r = ((r_ph/2) : r_ph : rmap - (r_ph/2));
        vett_c = ((c_ph/2) : c_ph : cmap - (c_ph/2));
-       
-%        vett_r = ((r_ph-1)/2 : r_ph : rmap-(r_ph-1)/2);
-%        vett_c = ((c_ph-1)/2 : c_ph : cmap-(c_ph-1)/2);
 
        map(vett_r,vett_c) = 1;      
                      

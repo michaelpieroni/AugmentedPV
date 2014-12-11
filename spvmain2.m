@@ -14,45 +14,17 @@ function [ m ] = spvmain2( im,type_map,mod_phos,box_margins,dist_elec,render_typ
 %   m: matrice contenente i dati dell'immagine che è stata fosfenizzata
 
 %CHECK INPUT
-switch (render_type)
-    case 'Default'
-        dxP = dist_elec; 
-        dyP = dist_elec;
-    case 'Design Not Uniform'
-        dyP = varargin{1};
-        dxP = varargin{2}; 
-        warning('To check if valid for non-uniform pixel distribution')
-    otherwise
-        error('Not valid input for dist_elec')
-end
 
-
-switch (type_map)
-    case{'Uniform'}
-         phos_r = box_margins{1};      
-         phos_c = box_margins{2};       
-         pixph_r = box_margins{3};        
-         pixph_c = box_margins{4};
-         
-         % spvfosfmap crea la mappa di fosfeni
-%          [ map,rmap,cmap ] = spvfosfmap( type_map,fr,fc,r_ph,c_ph );  
-%          [ map_int,map_std ] = spvfosfmap2( type_map,fr,fc);  
-         dim_phos{1} = phos_r;
-         dim_phos{2} = phos_c;
-         rmap = phos_r * pixph_r;
-         cmap = phos_c * pixph_c;
-         dim_phos{3} = rmap;
-         dim_phos{4} = cmap;
-         
-         % spvfosfprocessor provvede a campionare la matrice
-         [ inte,spread ] = spvfosfprocessor2( im,type_map,mod_phos,dim_phos);
-          
-         % verify the content of render_type 
-         switch render_type
-             case ('Default')
+    switch render_type
+           case ('Default')
+                 dxP = dist_elec; 
+                 dyP = dist_elec;
                  nRow_rend = size(im,1);
                  nCol_rend = size(im,2);
-             case ('Design Not Uniform')
+           case ('Design Not Uniform')
+                 dyP = varargin{1};
+                 dxP = varargin{2}; 
+                 warning('To check if valid for non-uniform pixel distribution')
                  if nargin>6
                      nRow_rend = varargin{1}; %number of row for rendering
                      if nargin>7
@@ -63,9 +35,30 @@ switch (type_map)
                  else
                      error ('Specify number of row and column for rendering or select Defaul!')
                  end
-         end
+     end
+
+switch (type_map)
+    case{'Uniform'}
+         phos_r = box_margins{1};
+         phos_c = box_margins{2};    
+         pixph_r = box_margins{3};        
+         pixph_c = box_margins{4};
+         rmap = phos_r * pixph_r;
+         cmap = phos_c * pixph_c;
+         
+         dim_phos{1} = phos_r;     
+         dim_phos{2} = phos_c;
+         dim_phos{3} = rmap;
+         dim_phos{4} = cmap;
+         
+         % spvfosfprocessor sample the matrix
+         [ inte,spread ] = spvfosfprocessor2( im,type_map,mod_phos,dim_phos);
+          
+         % verify the content of render_type 
+         
          [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend, mod_phos); 
-      %% sezione di prova   
+      
+         %% graphic of deviation standard and intensity   
          Mint = inte;
          Mstd = spread;
          figure;

@@ -121,14 +121,11 @@ function initialize_gui(hObject, eventdata, handles)
     set(handles.text_ty,'String','Uniform');
     handles.data.type_map = 'Uniform';
     
-    set(handles.text_tyrender,'String','Default');
-    handles.data.ty_render = 'Default';
+    set(handles.text_RendRow,'String','Default');
+    handles.data.RendRow = 'Default';
     
-    set(handles.text_RendRow,'String',num2str(10));
-    handles.data.RendRow = 10;
-    
-    set(handles.text_RendCol,'String',num2str(10));
-    handles.data.RendCol = 10;
+    set(handles.text_RendCol,'String','Default');
+    handles.data.RendCol = 'Default';
     
     guidata(hObject,handles);
     
@@ -171,10 +168,6 @@ function [hObject, eventdata, handles] = update_gui(hObject, eventdata, handles,
     handles.data.mod_prot = NewData.mod_prot;
     set(handles.text_mpr,'String',handles.data.mod_prot);
     
-    %Set new value of type rendering
-    handles.data.ty_render = NewData.ty_render;
-    set(handles.text_tyrender,'String',handles.data.ty_render);
-    
     %Set new value of type map
     handles.data.type_map = NewData.type_map;
     set(handles.text_ty,'String',handles.data.type_map);
@@ -211,6 +204,17 @@ function Play_Callback(hObject, eventdata, handles)
     pixph_c = vidWidth/handles.data.phos_c;  
     pixph_r = vidHeight/handles.data.phos_r;
     
+      %% Verify rendering not uniform
+    if (strcmp(handles.data.RendRow,'Default')==1)
+        handles.data.ty_render = 'Default';
+        RendRow2 = yIm;
+        RendCol2 = xIm;
+    else
+        handles.data.ty_render = 'Design Not Uniform';
+        RendRow2 = handles.data.RendRow;
+        RendCol2 = handles.data.RendCol;
+    end
+    
     %% Insert the variables in the box to pass in the function
     box_margin{1} = handles.data.phos_r;
     box_margin{2} = handles.data.phos_c;  
@@ -239,11 +243,12 @@ function Play_Callback(hObject, eventdata, handles)
 %               step(viewReal,frame)               
             step(videoPlayerLEFT,frame)
 %               showFrameOnAxis(handles.axesReal, frame);
+
                
             [FrameModified] = spvmain2(frame,handles.data.type_map,...
                               handles.data.mod_phos,box_margin,...
                               handles.data.distance,handles.data.ty_render,...
-                              handles.data.RendRow,handles.data.RendCol);     
+                              RendRow2,RendCol2);     
                               
 %           Display Phosfened video from on axis
              step(videoPlayerRIGHT,FrameModified)
@@ -271,18 +276,21 @@ function ImportVideo_Callback(hObject, eventdata, handles)
     [FileNameVid,PathNameVid] = uigetfile({'*.avi';'*.mp4'},'Select the VIDEO file',path_now); 
     handles.FileNameVid = FileNameVid;
     handles.PathNameVid = PathNameVid;
+    if PathNameVid == 0
+        return
+    end
     set(handles.Stop,'Enable', 'on');
     set(handles.Play,'Enable', 'on');
     set(handles.Pause,'Enable', 'on');
-   
+    
     %Save the modifications
     guidata(hObject,handles);       
  
 
 
 function ImportImage_Callback(hObject, eventdata, handles)
+%% Import the file name and path of Image and enable the button
 
- %% Import the file name and path of Image and enable the button
     path_now = cd();
     [FileNameIm,PathNameIm] = uigetfile({'*.*';'*.jpg';'*.png';'*.tif';'*.gif';},'Select the IMAGE file',path_now); 
     handles.FileNameIm = FileNameIm;
@@ -304,10 +312,20 @@ function ImportImage_Callback(hObject, eventdata, handles)
     [ImProc] = spvImageProcessing(ImConv);
     
     %% Calculating the number of pixel for each phosfene
-    [xIm,yIm] = size(ImProc);     
+    [xIm,yIm] = size(ImProc);
     pixph_c = xIm/handles.data.phos_c;  
     pixph_r = yIm/handles.data.phos_r;
 
+    %% Verify rendering not uniform
+    if (strcmp(handles.data.RendRow,'Default')==1)
+        handles.data.ty_render = 'Default';
+        RendRow2 = yIm;
+        RendCol2 = xIm;
+    else
+        handles.data.ty_render = 'Design Not Uniform';
+        RendRow2 = handles.data.RendRow;
+        RendCol2 = handles.data.RendCol;
+    end
     
     %% Insert the variables in the box to pass in the function
     box_margin{1} = handles.data.phos_r;
@@ -318,10 +336,11 @@ function ImportImage_Callback(hObject, eventdata, handles)
     %% Convert image stored
     [ImPhosf] = spvmain2(ImProc,handles.data.type_map,handles.data.mod_phos,...
                 box_margin,handles.data.distance,handles.data.ty_render,...
-                handles.data.RendRow,handles.data.RendCol);
+                RendRow2,RendCol2);
+            
     %% Adjust image representation
-    minV=min(reshape(ImPhosf,1,[]));
-    maxV=max(reshape(ImPhosf,1,[]));
+    minV = min(reshape(ImPhosf,1,[]));
+    maxV = max(reshape(ImPhosf,1,[]));
     
     
     imshow(ImPhosf,[minV maxV],'Parent',handles.axesPhosfened);
