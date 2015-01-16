@@ -63,7 +63,15 @@ function [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend,mod_phos, vara
 %         mapc = (py-(c_ph)/2)+1 : (py+(c_ph)/2)+1;
 %         m( mapr , mapc ) = frqfilt; 
 %     end  
- 
+%  
+
+
+% è possibile andare ad analizzare più campioni utilizzando tipo correlazione o 
+% devizione standard. Bisognerebbe quindi selezionare una sottomatrice, 
+% analizzare solamente un elemento della matrice intera (definita in base 
+% alla risoluzione che si vuole) e se tale valore non si discosta molto dagli
+% altri allora si può assegnare ai restanti lo stesso valore in modo da
+% evitare conti superflui
     
     %CASE 1: limited window
     
@@ -81,12 +89,15 @@ function [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend,mod_phos, vara
             % This is valid if no 'spatial response' has been
             % considered'!!!!! TO INCLUDE IN THE FUTURE
             % Get the min window witdh
-            for i = 1 : length(x)          
-                std_v = min([r_ph,c_ph])/5; % considering 99.99% of the signal energy
-                arg = ((lX - xc(i)).^2 + (lY-yc(i)).^2)./(2*pi* std_v.^2); 
-                frqfilt = inte(i).*exp(-arg);  
-                frqfilt = frqfilt';
-                m = m + frqfilt;
+            
+            for i = 1 : length(xc) 
+                for j = 1 :length(yc)
+                    std_v = min([r_ph,c_ph])/5; % considering 99.99% of the signal energy
+                    arg = ((lX - xc(i)).^2 + (lY - yc(j)).^2)./(2*pi* std_v.^2); 
+                    frqfilt = inte(i,j).*exp(-arg);  
+                    frqfilt = frqfilt';
+                    m = m + frqfilt;
+                end
             end    
         case{'Amplitude'; 'Amplitude & Intensity'}
             for i = 1 : length(xc)

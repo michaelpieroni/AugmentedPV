@@ -249,7 +249,7 @@ function Play_Callback(hObject, eventdata, handles)
                               handles.data.mod_phos,box_margin,...
                               handles.data.distance,handles.data.ty_render,...
                               RendRow2,RendCol2);     
-                              
+                            
 %           Display Phosfened video from on axis
              step(videoPlayerRIGHT,FrameModified)
 %               step(viewPhosf,FrameModified)
@@ -334,21 +334,16 @@ function ImportImage_Callback(hObject, eventdata, handles)
     box_margin{4} = pixph_c;
     
     %% Convert image stored
-    [ImPhosf] = spvmain2(ImProc,handles.data.type_map,handles.data.mod_phos,...
+        [ImPhosf] = spvmain2(ImProc,handles.data.type_map,handles.data.mod_phos,...
                 box_margin,handles.data.distance,handles.data.ty_render,...
-                RendRow2,RendCol2);
-            
-    %% Adjust image representation
+                RendRow2,RendCol2);          
+   %% Adjust image representation
     minV = min(reshape(ImPhosf,1,[]));
     maxV = max(reshape(ImPhosf,1,[]));
     
     
     imshow(ImPhosf,[minV maxV],'Parent',handles.axesPhosfened);
-% 
-%     %Save the modifications
-%     guidata(hObject,handles); 
-  
-
+    
 
 % --- Executes on key press with focus on ImportVideo and none of its controls.
 function ImportVideo_KeyPressFcn(hObject, eventdata, handles)

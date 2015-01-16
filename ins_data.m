@@ -180,15 +180,6 @@ varargout{1} = handles.output;
 
 % --- Executes on button press in push_insert.
 function push_insert_Callback(hObject, eventdata, handles)
-
-     if ~isempty(handles.edit_distance) || ~isempty(handles.edit_space) ||...
-        ~isempty(handles.edit_elec_r) || ~isempty(handles.edit_elec_c)||...
-        ~isempty(handles.edit_time) || ~isempty(handles.edit_RendCol)||...
-        ~isempty(handles.edit_RendRow)
-    %mancano ancora da controllare i pop up menu
-        errordlg('Please, Fill In All Fields','Error')
-        return
-     else
     
         handles.data.ele_r = str2num(get(handles.edit_elec_r,'String'));
         handles.data.ele_c = str2num(get(handles.edit_elec_c,'String'));
@@ -228,8 +219,24 @@ function push_insert_Callback(hObject, eventdata, handles)
            handles.data.RendCol = 'Default';
            handles.data.RendRow = 'Default';
         end
-           
-
+        
+        
+     if (strcmp(handles.data.ele_r,' ') == 1 || strcmp(handles.data.ele_r, '0')==1) 
+%         strcmp(handles.data.ele_c ,' ') || (handles.data.ele_c == 0) ||...             
+%         strcmp(handles.data.phos_r ,' ') || (handles.data.phos_r == 0) ||...
+%         strcmp(handles.data.phos_c ,' ') || (handles.data.phos_c == 0) ||...
+%         strcmp(handles.data.distance ,' ') || (handles.data.distance == 0) ||...
+%         strcmp(handles.data.r_space ,' ')|| (handles.data.r_space == 0)||...
+%         strcmp(handles.data.r_time ,' ') || (handles.data.r_time == 0))
+%         (handles.data.mod_prot)||...
+%         (handles.data.profile)|| 
+%         (handles.data.mod_phos)||...
+%         (handles.data.type_map)
+    
+        errordlg('Please, Fill In All Fields','Error')
+        return
+     else
+        
         guidata(hObject,handles)
         % Stored handles.data as global variable (0: used all figure)
         setappdata(0,'varGlobal',handles.data)
