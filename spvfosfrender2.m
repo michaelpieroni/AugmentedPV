@@ -18,10 +18,18 @@ function [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend,mod_phos, vara
     
     % verify if r_ph and c_ph are pair or not pair
     if mod(r_ph,2) ~= 0 
-       r_ph = r_ph-1;
+        if r_ph==1
+            r_ph=2;
+        else
+            r_ph = r_ph-1;
+        end
     end
     if mod(c_ph,2) ~= 0
-       c_ph = c_ph-1;
+        if c_ph==1
+            c_ph=2;
+        else
+            c_ph = c_ph-1;
+        end       
     end
       
     [ map ] = spvfosfmap( 'Uniform',fr,fc,r_ph,c_ph );
@@ -95,7 +103,11 @@ function [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend,mod_phos, vara
                 for j = 1 :length(xc)
                     std_v = min([r_ph,c_ph])/5; % considering 99.99% of the signal energy
                     arg = ((lX - xc(i)).^2 + (lY - yc(j)).^2)./(2*pi* std_v.^2); 
+<<<<<<< HEAD
                     frqfilt = inte(i,j).*exp(-arg);  
+=======
+                    frqfilt = inte(j,i).*exp(-arg);  
+>>>>>>> origin/master
 %                     frqfilt = frqfilt';
                     m = m + frqfilt;
                 end
@@ -104,10 +116,10 @@ function [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend,mod_phos, vara
         case{'Amplitude'; 'Amplitude & Intensity'}
             for i = 1 : length(xc)
                 for j = 1 :length(yc)
-                    std_v = spread(i,j);
+                    std_v = spread(j,i);
                     arg = ((lX - xc(i)).^2 + (lY - yc(j)).^2)./(2*pi* std_v.^2); 
-                    frqfilt = inte(i,j).*exp(-arg);  
-                    frqfilt = frqfilt';
+                    frqfilt = inte(j,i).*exp(-arg);  
+%                     frqfilt = frqfilt';
                     m = m + frqfilt;
                 end
             end    

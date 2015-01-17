@@ -66,8 +66,8 @@ switch (type_map)
          xlabel('Matrice Intensità');
          subplot(2,1,2); imagesc(Mstd)
          xlabel('Matrice Deviazione Standard');
-         
-         
+%          
+%          
          
          
 %          dx=dxP*size(m,2)/fc;         
