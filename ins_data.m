@@ -221,7 +221,7 @@ function push_insert_Callback(hObject, eventdata, handles)
         end
         
         
-     if (strcmp(handles.data.ele_r,' ') == 1 || strcmp(handles.data.ele_r, '0')==1) 
+%      if (strcmp(handles.data.ele_r,' ') == 0 || strcmp(handles.data.ele_r, '0')==) 
 %         strcmp(handles.data.ele_c ,' ') || (handles.data.ele_c == 0) ||...             
 %         strcmp(handles.data.phos_r ,' ') || (handles.data.phos_r == 0) ||...
 %         strcmp(handles.data.phos_c ,' ') || (handles.data.phos_c == 0) ||...
@@ -232,17 +232,17 @@ function push_insert_Callback(hObject, eventdata, handles)
 %         (handles.data.profile)|| 
 %         (handles.data.mod_phos)||...
 %         (handles.data.type_map)
-    
-        errordlg('Please, Fill In All Fields','Error')
-        return
-     else
+%     
+%         errordlg('Please, Fill In All Fields','Error')
+%         return
+%      else
         
         guidata(hObject,handles)
         % Stored handles.data as global variable (0: used all figure)
         setappdata(0,'varGlobal',handles.data)
         close;
         Main();
-     end
+%      end
      
    
       

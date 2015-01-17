@@ -85,20 +85,22 @@ function [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend,mod_phos, vara
     [lX,lY] = meshgrid(lx,ly);
     switch mod_phos
         case{'Intensity'}
+             
             % TODO
             % This is valid if no 'spatial response' has been
             % considered'!!!!! TO INCLUDE IN THE FUTURE
             % Get the min window witdh
             
-            for i = 1 : length(xc) 
-                for j = 1 :length(yc)
+            for i = 1 : length(yc) 
+                for j = 1 :length(xc)
                     std_v = min([r_ph,c_ph])/5; % considering 99.99% of the signal energy
                     arg = ((lX - xc(i)).^2 + (lY - yc(j)).^2)./(2*pi* std_v.^2); 
                     frqfilt = inte(i,j).*exp(-arg);  
-                    frqfilt = frqfilt';
+%                     frqfilt = frqfilt';
                     m = m + frqfilt;
                 end
             end    
+          
         case{'Amplitude'; 'Amplitude & Intensity'}
             for i = 1 : length(xc)
                 for j = 1 :length(yc)
@@ -112,7 +114,7 @@ function [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend,mod_phos, vara
              
         otherwise
                 error ('Not valid method of computation for the intensity and amplitude map!!')
-        end
+    end
        
      
 end
