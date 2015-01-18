@@ -22,7 +22,7 @@ function varargout = Main(varargin)
 
 % Edit the above text to modify the response to help Main
 
-% Last Modified by GUIDE v2.5 21-Nov-2014 16:00:08
+% Last Modified by GUIDE v2.5 17-Jan-2015 16:14:08
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -67,7 +67,7 @@ else
     %retrives the global variable saved in ins_data 
     GlobDat = getappdata(0,'varGlobal');  
     [hObject, eventdata, handles] = update_gui(hObject, eventdata, handles,GlobDat);
-    rmappdata(0,'varGlobal');
+    rmappdata(0,'varGlobal');  
 end
 
 
@@ -263,7 +263,7 @@ function Play_Callback(hObject, eventdata, handles)
 
 % 
 function Control_Panel_Callback(hObject, eventdata, handles)
-    % set StaticText (invisible) to control the first access 
+    %% set StaticText (invisible) to control the first access 
     set(handles.t_control_in,'String', 'yes');
     data = ins_data(handles);
     
@@ -284,13 +284,11 @@ function ImportVideo_Callback(hObject, eventdata, handles)
     set(handles.Pause,'Enable', 'on');
     
     %Save the modifications
-    guidata(hObject,handles);       
- 
-
+    guidata(hObject,handles);               
+    
 
 function ImportImage_Callback(hObject, eventdata, handles)
 %% Import the file name and path of Image and enable the button
-
     path_now = cd();
     [FileNameIm,PathNameIm] = uigetfile({'*.*';'*.jpg';'*.png';'*.tif';'*.gif';},'Select the IMAGE file',path_now); 
     handles.FileNameIm = FileNameIm;
@@ -332,16 +330,17 @@ function ImportImage_Callback(hObject, eventdata, handles)
     box_margin{2} = handles.data.phos_c;  
     box_margin{3} = pixph_r;
     box_margin{4} = pixph_c;
-    
+    tic
     %% Convert image stored
         [ImPhosf] = spvmain2(ImProc,handles.data.type_map,handles.data.mod_phos,...
                 box_margin,handles.data.distance,handles.data.ty_render,...
-                RendRow2,RendCol2);          
-   %% Adjust image representation
+                RendRow2,RendCol2);
+    toc
+    %% Adjust image representation
     minV = min(reshape(ImPhosf,1,[]));
     maxV = max(reshape(ImPhosf,1,[]));
     
-    
+    %% Show the phosfened vision
     imshow(ImPhosf,[minV maxV],'Parent',handles.axesPhosfened);
     
 
@@ -388,3 +387,8 @@ function Edit_Callback(hObject, eventdata, handles)
 function Exit_Callback(hObject, eventdata, handles)
     close();
    
+
+
+% --------------------------------------------------------------------
+function view_statistics_Callback(hObject, eventdata, handles)
+    Statistics_Data();

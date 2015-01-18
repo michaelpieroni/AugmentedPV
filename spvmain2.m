@@ -61,11 +61,11 @@ switch (type_map)
          %% graphic of deviation standard and intensity   
          Mint = inte;
          Mstd = spread;
-         figure;
-         subplot(2,1,1); imagesc(Mint)
-         xlabel('Matrice Intensità');
-         subplot(2,1,2); imagesc(Mstd)
-         xlabel('Matrice Deviazione Standard');
+%          figure;
+%          subplot(2,1,1); imagesc(Mint)
+%          xlabel('Matrice Intensità');
+%          subplot(2,1,2); imagesc(Mstd)
+%          xlabel('Matrice Deviazione Standard');
 %          
 %          
          

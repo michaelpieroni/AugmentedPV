@@ -160,8 +160,7 @@ function inizialize_edit(hObject, eventdata, handles,ctM)
             RRow = num2str(get(ctM.text_RendRow,'String'));
             set(handles.edit_RendRow,'String',RRow);
     end
-     
-    
+ 
     guidata(hObject,handles);
             
         
@@ -192,23 +191,23 @@ function push_insert_Callback(hObject, eventdata, handles)
       
         %select modulation prothesis
         list1 = get(handles.pop_mod_prot,'String');
-        m = get(handles.pop_mod_prot,'Value');
-        handles.data.mod_prot = char(list1(m));
+        ValMp = get(handles.pop_mod_prot,'Value');
+        handles.data.mod_prot = char(list1(ValMp));
 
         %select profile
         list2 = get(handles.pop_profile,'String');
-        pr = get(handles.pop_profile,'Value');
-        handles.data.profile = char(list2(pr));
+        ValPr= get(handles.pop_profile,'Value');
+        handles.data.profile = char(list2(ValPr));
     
         %select modulation phosphene
         list3 = get(handles.pop_mod_phos,'String');
-        ph = get(handles.pop_mod_phos,'Value');
-        handles.data.mod_phos = char(list3(ph));
+        ValPh = get(handles.pop_mod_phos,'Value');
+        handles.data.mod_phos = char(list3(ValPh));
         
         %select type map
         list4 = get(handles.pop_type,'String');
-        ty = get(handles.pop_type,'Value');
-        handles.data.type_map = char(list4(ty));
+        ValTy = get(handles.pop_type,'Value');
+        handles.data.type_map = char(list4(ValTy));
         
         %select num row and column of renderig not uniform
         ch_abil = get(handles.check_render,'Value');
@@ -220,29 +219,27 @@ function push_insert_Callback(hObject, eventdata, handles)
            handles.data.RendRow = 'Default';
         end
         
+        %% Verify of correct data entry
+        if isempty(handles.data.ele_r) || (handles.data.ele_r < 1) ||...
+           isempty(handles.data.ele_c ) || (handles.data.ele_c < 1) ||...             
+           isempty(handles.data.phos_r) || (handles.data.phos_r < 1) ||...
+           isempty(handles.data.phos_c) || (handles.data.phos_c  < 1) ||...
+           isempty(handles.data.distance) || (handles.data.distance < 1) ||...
+           isempty(handles.data.r_space) || (handles.data.r_space < 1)||...
+           isempty(handles.data.r_time) || (handles.data.r_time  < 1) ||...
+           (ValPr < 2) || (ValPh < 2) || (ValTy < 2) || (ValMp < 2)
+    
+            errordlg('Please, Insert data correctly . Their values ??can not be blank or null.','Error')
+            return
+        else
+        %% Stored handles.data as global variable (0: used all figure)
+            guidata(hObject,handles);
+            setappdata(0,'varGlobal',handles.data);
+            close;
+            Main();
+        end
         
-%      if (strcmp(handles.data.ele_r,' ') == 0 || strcmp(handles.data.ele_r, '0')==) 
-%         strcmp(handles.data.ele_c ,' ') || (handles.data.ele_c == 0) ||...             
-%         strcmp(handles.data.phos_r ,' ') || (handles.data.phos_r == 0) ||...
-%         strcmp(handles.data.phos_c ,' ') || (handles.data.phos_c == 0) ||...
-%         strcmp(handles.data.distance ,' ') || (handles.data.distance == 0) ||...
-%         strcmp(handles.data.r_space ,' ')|| (handles.data.r_space == 0)||...
-%         strcmp(handles.data.r_time ,' ') || (handles.data.r_time == 0))
-%         (handles.data.mod_prot)||...
-%         (handles.data.profile)|| 
-%         (handles.data.mod_phos)||...
-%         (handles.data.type_map)
-%     
-%         errordlg('Please, Fill In All Fields','Error')
-%         return
-%      else
-        
-        guidata(hObject,handles)
-        % Stored handles.data as global variable (0: used all figure)
-        setappdata(0,'varGlobal',handles.data)
-        close;
-        Main();
-%      end
+  
      
    
       

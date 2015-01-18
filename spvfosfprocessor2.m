@@ -88,56 +88,7 @@ switch(type_map)
                  
                  end
              end
-         end
-% %                         ind_c=vett_c(np_c-1)+1:vett_c(np_c);
-% % %                         ind_r=vett_r(np_r-1)+1:vett_r(np_r);
-% %                         ind_c=vett_c(np_c-1):vett_c(np_c);
-% %                         ind_r=vett_r(np_r-1):vett_r(np_r);
-                 
-% %                         imWind=imROI(floor(ind_r),floor(ind_c));
-%                         
-%                         
-%                         
-%                         
-%                         
-%                         
-%                         spread(np_r-1,np_c-1)=std(std(imWind));
-%                     end                     
-%                 end
-%         switch(mod_phos)
-%             case('Amplitude')
-%                
-%                 %then intensity to ones
-%                 intensity=ones(length(coord_r),length(coord_c));
-
-% 
-%            case('Intensity')
-%                 for np_c=2:length(vett_c)
-%                     for np_r=2:length(vett_r)
-%                         ind_c=vett_c(np_c-1)+1:vett_c(np_c);
-%                         ind_r=vett_r(np_r-1)+1:vett_r(np_r);
-%                         imWind=imROI(floor(ind_r),floor(ind_c));
-%                         intensity(np_r-1,np_c-1)=mean(mean(imWind));
-%                     end                     
-%                 end
-%                 %then intensity to ones
-%                 spread=ones(length(coord_r),length(coord_c));
-
-
-% 
-%            case('& Amplitude-Intensity')
-%                 for np_c=2:length(vett_c)
-%                     for np_r=2 : length(vett_r)
-%                         ind_c = vett_c(np_c-1)+1:vett_c(np_c);
-%                         ind_r = vett_r(np_r-1)+1:vett_r(np_r);
-%                         imWind = imROI(floor(ind_r),floor(ind_c));
-%                         spread(np_r-1,np_c-1) = std(std(imWind));
-%                         intensity(np_r-1,np_c-1) = mean(mean(imWind));
-%                     end                     
-%                 end
-
-%         end
-%         
+         end        
     case('Not Uniform')
         error ('Not uniform is not already implemented')
         

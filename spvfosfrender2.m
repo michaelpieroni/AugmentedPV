@@ -39,40 +39,6 @@ function [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend,mod_phos, vara
 
     % creo una matrice di zeri che possiede la stessa dimensione della mappa
     m = zeros(size(map));
-    
-    
-%     %CASE 1: limited window
-%     
-%     lx = (-(r_ph)/2):((r_ph)/2); 
-%     ly = (-(c_ph)/2):((c_ph)/2);  
-%     
-%     [lX,lY] = meshgrid(lx,ly);
-%     for i = 1 : length(x)
-%         px = x(i);
-%         py = y(i);
-%         
-%         switch mod_phos
-%             case{'Intensity'}
-%                 % TODO
-%                 % This is valid if no 'spatial response' has been
-%                 % considered'!!!!! TO INCLUDE IN THE FUTURE
-%                 % Get the min window witdh
-%                 std_v = min([r_ph,c_ph])/5; % considering 99.99% of the signal energy
-%             case{'Amplitude'; 'Amplitude & Intensity'}
-%                 std_v = spread(i);
-%             otherwise
-%                 error ('Not valid method of computation for the intensity and amplitude map!!')
-%         end
-%         arg = ((lX.^2+lY.^2)./(2*pi* std_v.^2)); 
-%         frqfilt = inte(i).*exp(-arg);  
-%         frqfilt = frqfilt';
-%         
-%         mapr = (px-(r_ph)/2)+1 : (px+(r_ph)/2)+1;
-%         mapc = (py-(c_ph)/2)+1 : (py+(c_ph)/2)+1;
-%         m( mapr , mapc ) = frqfilt; 
-%     end  
-%  
-
 
 % è possibile andare ad analizzare più campioni utilizzando tipo correlazione o 
 % devizione standard. Bisognerebbe quindi selezionare una sottomatrice, 
@@ -103,11 +69,8 @@ function [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend,mod_phos, vara
                 for j = 1 :length(xc)
                     std_v = min([r_ph,c_ph])/5; % considering 99.99% of the signal energy
                     arg = ((lX - xc(i)).^2 + (lY - yc(j)).^2)./(2*pi* std_v.^2); 
-<<<<<<< HEAD
-                    frqfilt = inte(i,j).*exp(-arg);  
-=======
                     frqfilt = inte(j,i).*exp(-arg);  
->>>>>>> origin/master
+
 %                     frqfilt = frqfilt';
                     m = m + frqfilt;
                 end
