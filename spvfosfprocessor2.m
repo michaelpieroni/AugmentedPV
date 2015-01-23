@@ -43,8 +43,8 @@ switch(type_map)
         end
 
       
-        vett_r = linspace(1,r_imPh,phos_r+1); % vector for row
-        vett_c = linspace(1,c_imPh,phos_c+1); % vector for column
+        vett_r = linspace(0,r_imPh,phos_r+1); % vector for row
+        vett_c = linspace(0,c_imPh,phos_c+1); % vector for column
         
         % Floor the indices
         vettMIN_r = floor(vett_r); % vector for row
@@ -57,16 +57,34 @@ switch(type_map)
          for ic = 2 : length(vett_c)
              for ir = 2:length(vett_r)
                 %% DEFINITION of USEFUL INDICEs
-                 indR = vettMIN_r(ir-1) : vettMIN_r(ir);
-                 indC = vettMIN_c(ic-1) : vettMIN_c(ic);
+                 indR = vettMIN_r(ir-1)+1 : vettMIN_r(ir);
+                 indC = vettMIN_c(ic-1)+1 : vettMIN_c(ic);
                  indR_sup = min([vettMIN_r(ir)+1,r_imPh]);
                  indC_sup = min([vettMIN_c(ic)+1,c_imPh]);
 %                  
-%                 
-%                  A0 = Im(indR, indC); %within lower bounders                 
+                %% solution1: weighted sum    
+                 A0 = Im(indR, indC); %within lower bounders                 
+                 A1 = Im(indR, indC_sup)*Dv_c(ic); %within higher column bounder                 
+                 A2 = Im(indR_sup, indC)* Dv_r(ir); %within higher row bounder                 
+                 A3 = Im(indR_sup, indC_sup)* Dv_c(ic)*Dv_r(ir); %within higher column & row bounders
+                
+                 
+                 B0 = reshape(A0,1,[]); 
+                 B1 = reshape(A1,1,[]);
+                 B2 = reshape(A2,1,[]);
+                 B3 = reshape(A3,1,[]);
+                 Btot = [B0,B1,B2,B3];
+                 
+                 %% Solution 1B: std 
+%                  A0 = Im(indR, indC); %within lower bounders
 %                  A1 = Im(indR, indC_sup)*Dv_c(ic); %within higher column bounder                 
 %                  A2 = Im(indR_sup, indC)* Dv_r(ir); %within higher row bounder                 
 %                  A3 = Im(indR_sup, indC_sup)* Dv_c(ic)*Dv_r(ir); %within higher column & row bounders
+%                  
+%                  nA0=numel(A0);nA1=numel(A1)*Dv_c(ic);nA2=numel(A2)* Dv_r(ir);nA3=numel(A3)*Dv_c(ic)*Dv_r(ir);
+%                  sumA=sum([sum(sum(A0)),sum(sum(A1)),sum(sum(A2)),sum(sum(A3))]);
+%                  numelA=sum([nA0,nA1,nA2,nA3]);
+%                                   
 %                 
 %                  
 %                  B0 = reshape(A0,1,[]); 
@@ -74,24 +92,25 @@ switch(type_map)
 %                  B2 = reshape(A2,1,[]);
 %                  B3 = reshape(A3,1,[]);
 %                  Btot = [B0,B1,B2,B3];
+%                  Btot=Btot-(sumA/numelA);
+%                    % normalization factor of standard deviation
+%                  std_norm=mean([r_imPh,c_imPh]);
+%                  
+%                  switch (mod_phos)
+%                       case('Amplitude')
+%                           spread(ir-1,ic-1) = std(Btot);
+%                           intensity(ir-1,ic-1) = 1; %normalized                         
+%                       case('Intensity')
+%                          spread(ir-1,ic-1) = std_norm;     %normalized
+%                          intensity(ir-1,ic-1) = (sumA/numelA);
+%                      case('Amplitude & Intensity')
+%                          intensity(ir-1,ic-1) = (sumA/numelA);
+%                          spread(ir-1,ic-1) = std(Btot);
+%                  
+%                  end
 
-     
-                %% prova
-%                  A0 = Im(indR, indC);
-%                  B0 = reshape(A0,1,[]);
-%                  
-%                  A1 = Im(indR,indC_sup.*Dv_c(ic));
-%                  B1 = reshape(A1,1,[]);
-%                  
-%                  A2 = Im(indR_sup.*Dv_r(ir), indC);
-%                  B2 = reshape(A2,1,[]);
-%                  
-%                  A3 = Im(indR_sup.*Dv_r(ir), indC_sup.* Dv_c(ic));
-%                  B3 = reshape(A3,1,[]);
-%                  
-%                  Btot = [B0,B1,B2,B3];
 
-                %% prova 2
+                %% soluzione 2: ceil
                  %% GET IMAGE REGIONs
                  A0 = Im(indR, indC);
                  A1 = Im(indR,ceil(indC_sup));
@@ -105,12 +124,15 @@ switch(type_map)
                  B3 = reshape(A3,1,[]);
                  Btot = [B0,B1,B2,B3];
                               
+                 % normalization factor of standard deviation
+                 std_norm=mean([r_imPh,c_imPh]);
+                 
                  switch (mod_phos)
                       case('Amplitude')
                           spread(ir-1,ic-1) = std(Btot);
                           intensity(ir-1,ic-1) = 1; %normalized                         
                       case('Intensity')
-                         spread(ir-1,ic-1) = 1;     %normalized
+                         spread(ir-1,ic-1) = std_norm;     %normalized
                          intensity(ir-1,ic-1) = mean(Btot);
                      case('Amplitude & Intensity')
                          intensity(ir-1,ic-1) = mean(Btot);
@@ -118,7 +140,9 @@ switch(type_map)
                  
                  end
              end
-         end        
+         end
+         %normalized spread to region of interest dimension
+         spread=spread/std_norm; 
     case('Not Uniform')
         error ('Not uniform is not already implemented')
         

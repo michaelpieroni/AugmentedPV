@@ -77,7 +77,7 @@ function [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend,mod_phos, vara
         case{'Amplitude'; 'Amplitude & Intensity'}
             for i = 1 : length(xc)
                 for j = 1 :length(yc)
-                    std_v = spread(j,i);
+                    std_v = spread(j,i)*mean([r_ph,c_ph]);
                     arg = ((lX - xc(i)).^2 + (lY - yc(j)).^2)./(2*pi* std_v.^2); 
                     frqfilt = inte(j,i).*exp(-arg);  
                     m = m + frqfilt;
