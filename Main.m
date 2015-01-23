@@ -194,11 +194,12 @@ function Play_Callback(hObject, eventdata, handles)
     cd(path_old);
     
     %% Get same input data parameters
-    %nof =                                  %number of frame for the overall video
+%    nof                                    %number of frame for the overall video
     vidHeight = vid.info.VideoSize(2);      %Height video
     vidWidth = vid.info.VideoSize(1);       %Width video
     vidFrate = vid.info.VideoFrameRate;     %Number of frame for second
     vidFormat = vid.info.VideoFormat;       %Format of Video 
+    
     
     %% Calculating the number of pixel for each phosfene
     pixph_c = vidWidth/handles.data.phos_c;  
@@ -207,8 +208,8 @@ function Play_Callback(hObject, eventdata, handles)
       %% Verify rendering not uniform
     if (strcmp(handles.data.RendRow,'Default')==1)
         handles.data.ty_render = 'Default';
-        RendRow2 = yIm;
-        RendCol2 = xIm;
+        RendRow2 = vidHeight;
+        RendCol2 = vidWidth;
     else
         handles.data.ty_render = 'Design Not Uniform';
         RendRow2 = handles.data.RendRow;
@@ -223,12 +224,19 @@ function Play_Callback(hObject, eventdata, handles)
 
 %% http://it.mathworks.com/help/vision/functionlist.html
 %  da consultare per tutte le funzionalità della computer vision di Matlab
-%%    
-    videoPlayerLEFT = vision.VideoPlayer;
-    videoPlayerRIGHT = vision.VideoPlayer;              
+
+%%  Another two mothod for display input video frame on axis
 %             viewReal = vision.DeployableVideoPlayer;
 %             viewPhosf = vision.DeployableVideoPlayer;
-      
+%             while ~isDone(vid)
+%      FIRST        step(viewReal,frame)               
+%                   step(viewPhosf,FrameModified)
+%      SECOND       showFrameOnAxis(handles.axesReal, frame);
+%                   showFrameOnAxis(handles.axesPhosfened, FrameModified);
+%             end
+
+    videoPlayerLEFT = vision.VideoPlayer;
+    videoPlayerRIGHT = vision.VideoPlayer;
     handles.vid_pause = 1;
     handles.vid_stop = 1;
     
@@ -239,21 +247,15 @@ function Play_Callback(hObject, eventdata, handles)
    %         end
             
             frame = step(vid);
-%           Display input video frame on axis
-%               step(viewReal,frame)               
             step(videoPlayerLEFT,frame)
-%               showFrameOnAxis(handles.axesReal, frame);
-
-               
+            %% Convert frame stored
             [FrameModified] = spvmain2(frame,handles.data.type_map,...
                               handles.data.mod_phos,box_margin,...
                               handles.data.distance,handles.data.ty_render,...
                               RendRow2,RendCol2);     
                             
-%           Display Phosfened video from on axis
-             step(videoPlayerRIGHT,FrameModified)
-%               step(viewPhosf,FrameModified)
-%               showFrameOnAxis(handles.axesPhosfened, FrameModified);
+             %% Display Phosfened video from on axis
+             step(videoPlayerRIGHT,FrameModified)            
         end
         
    %     break 
@@ -279,11 +281,12 @@ function ImportVideo_Callback(hObject, eventdata, handles)
     if PathNameVid == 0
         return
     end
+    %% Enable the buttons 
     set(handles.Stop,'Enable', 'on');
     set(handles.Play,'Enable', 'on');
     set(handles.Pause,'Enable', 'on');
     
-    %Save the modifications
+    %% Save the modifications
     guidata(hObject,handles);               
     
 

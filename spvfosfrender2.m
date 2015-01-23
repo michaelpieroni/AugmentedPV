@@ -70,8 +70,6 @@ function [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend,mod_phos, vara
                     std_v = min([r_ph,c_ph])/5; % considering 99.99% of the signal energy
                     arg = ((lX - xc(i)).^2 + (lY - yc(j)).^2)./(2*pi* std_v.^2); 
                     frqfilt = inte(j,i).*exp(-arg);  
-
-%                     frqfilt = frqfilt';
                     m = m + frqfilt;
                 end
             end    
@@ -82,7 +80,6 @@ function [ m ] = spvfosfrender2( inte,spread, nRow_rend,nCol_rend,mod_phos, vara
                     std_v = spread(j,i);
                     arg = ((lX - xc(i)).^2 + (lY - yc(j)).^2)./(2*pi* std_v.^2); 
                     frqfilt = inte(j,i).*exp(-arg);  
-%                     frqfilt = frqfilt';
                     m = m + frqfilt;
                 end
             end    
