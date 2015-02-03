@@ -22,7 +22,7 @@ function varargout = Main(varargin)
 
 % Edit the above text to modify the response to help Main
 
-% Last Modified by GUIDE v2.5 17-Jan-2015 16:14:08
+% Last Modified by GUIDE v2.5 29-Jan-2015 18:13:37
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -187,6 +187,10 @@ function [hObject, eventdata, handles] = update_gui(hObject, eventdata, handles,
 % --- Executes on button press in Play.
 function Play_Callback(hObject, eventdata, handles)
 
+%% http://it.mathworks.com/help/vision/functionlist.html
+%  da consultare per tutte le funzionalità della computer vision di Matlab
+
+
     path_old = cd(handles.PathNameVid);
     if not(exist('vid')) 
        vid = vision.VideoFileReader(handles.FileNameVid,'ImageColorSpace','Intensity', 'VideoOutputDataType', 'double' );
@@ -222,12 +226,9 @@ function Play_Callback(hObject, eventdata, handles)
     box_margin{3} = pixph_r;
     box_margin{4} = pixph_c;
 
-%% http://it.mathworks.com/help/vision/functionlist.html
-%  da consultare per tutte le funzionalità della computer vision di Matlab
-
 %%  Another two mothod for display input video frame on axis
 %             viewReal = vision.DeployableVideoPlayer;
-%             viewPhosf = vision.DeployableVideoPlayer;
+%             viewPhos = vision.DeployableVideoPlayer;
 %             while ~isDone(vid)
 %      FIRST        step(viewReal,frame)               
 %                   step(viewPhosf,FrameModified)
@@ -237,33 +238,28 @@ function Play_Callback(hObject, eventdata, handles)
 
     videoPlayerLEFT = vision.VideoPlayer;
     videoPlayerRIGHT = vision.VideoPlayer;
-    handles.vid_pause = 1;
-    handles.vid_stop = 1;
-    
- %   while handles.vid_stop == 1
+    set(handles.txt_pause,'String','');
+    set(handles.txt_stop,'String','');
+ 
+   while strcmp(handles.txt_stop,'Stop')~=1
         while ~isDone(vid) 
-  %          while handles.vid_pause ==1
-                %loop for wait the push play
-   %         end
+           while strcmp(handles.txt_pause,'Pause')~=0
+%                 loop for wait the push play
+           end
             
             frame = step(vid);
             step(videoPlayerLEFT,frame)
+
             %% Convert frame stored
-            [FrameModified] = spvmain2(frame,handles.data.type_map,...
+            [FrameModified] = spvMain(frame,handles.data.type_map,...
                               handles.data.mod_phos,box_margin,...
                               handles.data.distance,handles.data.ty_render,...
-                              RendRow2,RendCol2);     
-                            
-             %% Display Phosfened video from on axis
+                              RendRow2,RendCol2);    
              step(videoPlayerRIGHT,FrameModified)            
-        end
-        
-   %     break 
-   %end
+        end  
+       return 
+   end
 
-
-
-% 
 function Control_Panel_Callback(hObject, eventdata, handles)
     %% set StaticText (invisible) to control the first access 
     set(handles.t_control_in,'String', 'yes');
@@ -273,29 +269,34 @@ function Control_Panel_Callback(hObject, eventdata, handles)
 
 function ImportVideo_Callback(hObject, eventdata, handles)
  %% Import the file name and path of video and enable the button
- 
     path_now = cd();
-    [FileNameVid,PathNameVid] = uigetfile({'*.avi';'*.mp4'},'Select the VIDEO file',path_now); 
+    [FileNameVid,PathNameVid] = uigetfile({'*.avi';'*.mp4';'*.flv'},'Select the VIDEO file',path_now); 
     handles.FileNameVid = FileNameVid;
     handles.PathNameVid = PathNameVid;
     if PathNameVid == 0
         return
     end
+    
     %% Enable the buttons 
     set(handles.Stop,'Enable', 'on');
     set(handles.Play,'Enable', 'on');
     set(handles.Pause,'Enable', 'on');
+    set(handles.edit_fps,'Enable', 'on');
+    set(handles.rec_video,'Enable', 'on');
     
     %% Save the modifications
     guidata(hObject,handles);               
     
 
-function ImportImage_Callback(hObject, eventdata, handles)
+function ImportImage_Callback(hObject, eventdata, handles)    
 %% Import the file name and path of Image and enable the button
     path_now = cd();
     [FileNameIm,PathNameIm] = uigetfile({'*.*';'*.jpg';'*.png';'*.tif';'*.gif';},'Select the IMAGE file',path_now); 
     handles.FileNameIm = FileNameIm;
-    handles.PathNameIm = PathNameIm;
+    handles.PathNameIm = PathNameIm; 
+    
+    set(handles.btn_save,'Enable','on');
+    set(handles.btn_refresh,'Enable','on');
     if PathNameIm == 0
         return
     end
@@ -333,31 +334,83 @@ function ImportImage_Callback(hObject, eventdata, handles)
     box_margin{2} = handles.data.phos_c;  
     box_margin{3} = pixph_r;
     box_margin{4} = pixph_c;
-    tic
+    
     %% Convert image stored
-        [ImPhosf] = spvmain2(ImProc,handles.data.type_map,handles.data.mod_phos,...
-                box_margin,handles.data.distance,handles.data.ty_render,...
-                RendRow2,RendCol2);
-    toc
+    [ImPhosph] = spvMain(ImProc,handles.data.type_map,handles.data.mod_phos,...
+            box_margin,handles.data.distance,handles.data.ty_render,...
+            RendRow2,RendCol2);
+    handles.ImPhosf = ImPhosph;    
+    
     %% Adjust image representation
-    minV = min(reshape(ImPhosf,1,[]));
-    maxV = max(reshape(ImPhosf,1,[]));
+    minV = min(reshape(ImPhosph,1,[]));
+    maxV = max(reshape(ImPhosph,1,[]));
     
     %% Show the phosfened vision
-    imshow(ImPhosf,[minV maxV],'Parent',handles.axesPhosfened);
+    axis([1 size(ImProc,1) 1 size(ImProc,2)]);
+    imshow(ImPhosph,[minV maxV],'Parent',handles.axesPhosfened);
+    guidata(hObject,handles);
     
+    
+ 
+function btn_refresh_Callback(hObject, eventdata, handles)
+  %% Reload the Image
+    path_old = cd(handles.PathNameIm);
+    if not(exist('Image'))
+        Image = imread(handles.FileNameIm);
+    end
+    cd(path_old);
+    ImConv = rgb2gray(Image);
+    imshow(ImConv,'Parent',handles.axesReal);
+    
+    %% Image processing
+    [ImProc] = spvImageProcessing(ImConv);
+    
+    %% Calculating the number of pixel for each phosfene
+    [xIm,yIm] = size(ImProc);
+    pixph_c = xIm/handles.data.phos_c;  
+    pixph_r = yIm/handles.data.phos_r;
 
-% --- Executes on key press with focus on ImportVideo and none of its controls.
-function ImportVideo_KeyPressFcn(hObject, eventdata, handles)
-% hObject    handle to ImportVideo (see GCBO)
-% eventdata  structure with the following fields (see UICONTROL)
-%	Key: name of the key that was pressed, in lower case
-%	Character: character interpretation of the key(s) that was pressed
-%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
-% handles    structure with handles and user data (see GUIDATA)
+    %% Verify rendering not uniform
+    if (strcmp(handles.data.RendRow,'Default')==1)
+        handles.data.ty_render = 'Default';
+        RendRow2 = yIm;
+        RendCol2 = xIm;
+    else
+        handles.data.ty_render = 'Design Not Uniform';
+        RendRow2 = handles.data.RendRow;
+        RendCol2 = handles.data.RendCol;
+    end
+
+    %% Insert the variables in the box to pass in the function
+    box_margin{1} = handles.data.phos_r;
+    box_margin{2} = handles.data.phos_c;  
+    box_margin{3} = pixph_r;
+    box_margin{4} = pixph_c;
+
+    %% Convert image stored
+    [ImPhosph] = spvMain(ImProc,handles.data.type_map,handles.data.mod_phos,...
+            box_margin,handles.data.distance,handles.data.ty_render,...
+            RendRow2,RendCol2);
+    handles.ImPhosf = ImPhosph;
+    
+    %% Adjust image representation
+    minV = min(reshape(ImPhosph,1,[]));
+    maxV = max(reshape(ImPhosph,1,[]));
+
+    %% Show the phosfened vision
+    %axis([1 size(ImProc,1) 1 size(ImProc,2)]);
+    imshow(ImPhosph,[minV maxV],'Parent',handles.axesPhosfened);
+    guidata(hObject,handles);
 
 
-% --- Executes on key press with focus on Stop and none of its controls.
+function btn_save_Callback(hObject, eventdata, handles)
+  %% Stored Image to file
+    ImPhosph = handles.ImPhosf;
+    StoredIm = imshow(ImPhosph);
+    imsave(StoredIm);
+        
+        
+
 function Stop_KeyPressFcn(hObject, eventdata, handles)
 % hObject    handle to Stop (see GCBO)
 % eventdata  structure with the following fields (see UICONTROL)
@@ -369,13 +422,15 @@ function Stop_KeyPressFcn(hObject, eventdata, handles)
 
 % --- Executes on button press in Stop.
 function Stop_Callback(hObject, eventdata, handles)
-    handles.vid_stop = 0;
+%     stop(vid)
+    set(handles.txt_stop,'String','Stop');
     guidata(hObject,handles); 
 
 % --- Executes on button press in Pause.
 function Pause_Callback(hObject, eventdata, handles)
-    handles.vid_pause = 0;
-    guidata(hObject,handles); 
+     set(handles.txt_pause,'String','Pause');    
+     guidata(hObject,handles); 
+%     pause on;
 
     
 % --------------------------------------------------------------------
@@ -395,3 +450,102 @@ function Exit_Callback(hObject, eventdata, handles)
 % --------------------------------------------------------------------
 function view_statistics_Callback(hObject, eventdata, handles)
     Statistics_Data();
+
+
+
+% --- Executes during object creation, after setting all properties.
+function btn_refresh_CreateFcn(hObject, eventdata, handles)
+% % img = imread('icona_refresh.png');    
+% % handles.btn_refresh = uicontrol(Main,'Style','pushbutton',...
+% %                 'Position',[50 20 100 45],...
+% %                 'CData',img);
+% % set(handles.btn_refresh,'Enable', 'on');
+% % 
+
+
+% --- Executes on button press in rec_video.
+function rec_video_Callback(hObject, eventdata, handles)
+    %% Recording and video conversion. Save as "VidModified.avi" 
+    
+    nFrameFin = str2num(get(handles.edit_fps,'String'));
+    handles.nFrameFin = nFrameFin;
+    %% Verify the correctly insert number of fps
+    if (nFrameFin == 0) || (nFrameFin > 25)
+        error ('Number of wrong Frames!! ')
+        return
+    else if (nFrameFin > 5) && ( nFrameFin < 25) || (nFrameFin == 25)
+             button = questdlg('Do you want to continue? Becuase, the rendering time is very high',...
+                               'Continue Operation?','Yes','No');
+             if strcmp(button,'No') == 1
+                return
+             end
+        end
+    end
+     
+    path_old = cd(handles.PathNameVid);
+    if not(exist('vid')) 
+       vid = vision.VideoFileReader(handles.FileNameVid,'ImageColorSpace','Intensity', 'VideoOutputDataType', 'double' );
+    end
+    cd(path_old);
+    
+    %% Get same input data parameters
+    vidHeight = vid.info.VideoSize(2);      %Height video
+    vidWidth = vid.info.VideoSize(1);       %Width video
+    vidFrate = vid.info.VideoFrameRate;     %Number of frame for second
+    vidFormat = vid.info.VideoFormat;       %Format of Video 
+        
+    %% Calculating the number of pixel for each phosfene
+    pixph_c = vidWidth/handles.data.phos_c;  
+    pixph_r = vidHeight/handles.data.phos_r;
+    
+      %% Verify rendering not uniform
+    if (strcmp(handles.data.RendRow,'Default')==1)
+        handles.data.ty_render = 'Default';
+        RendRow2 = vidHeight;
+        RendCol2 = vidWidth;
+    else
+        handles.data.ty_render = 'Design Not Uniform';
+        RendRow2 = handles.data.RendRow;
+        RendCol2 = handles.data.RendCol;
+    end
+    
+    %% Insert the variables in the box to pass in the function
+    box_margin{1} = handles.data.phos_r;
+    box_margin{2} = handles.data.phos_c;  
+    box_margin{3} = pixph_r;
+    box_margin{4} = pixph_c;
+          
+    writerObj = VideoWriter('VidModified.avi');
+    open(writerObj);
+    writerObj.FrameRate = handles.nFramFin;
+    % Default fps = 25
+    N = floor(25/handles.nFramFin);
+    i = 0;
+    while ~isDone(vid)
+        i = i+1;
+        if i == N
+            frame = step(vid);
+            %% Convert frame stored
+            [FrameModified] = spvmain2(frame,handles.data.type_map,...
+                              handles.data.mod_phos,box_margin,...
+                              handles.data.distance,handles.data.ty_render,...
+                              RendRow2,RendCol2);     
+            writerObj = writeVideo(writerObj,FrameModified); 
+            i = 0;
+        end
+    end
+    close(writerObj);
+
+
+
+function edit_fps_Callback(hObject, eventdata, handles)
+
+
+
+% --- Executes during object creation, after setting all properties.
+function edit_fps_CreateFcn(hObject, eventdata, handles)
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

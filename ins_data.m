@@ -145,6 +145,8 @@ function inizialize_edit(hObject, eventdata, handles,ctM)
             set(handles.pop_profile,'Value',2);
         case {'Circle'}
             set(handles.pop_profile,'Value',3);
+        case {'Hexagonal'}
+            set(handles.pop_profile,'Value',3);
     end     
     
 %Rendering Not Uniform
